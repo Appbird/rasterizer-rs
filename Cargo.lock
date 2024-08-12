@@ -303,6 +303,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "error-iter"
+version = "0.4.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8070547d90d1b98debb6626421d742c897942bbb78f047694a5eb769495eccd6"
+
+[[package]]
 name = "fltk"
 version = "1.4.33"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -313,6 +319,7 @@ dependencies = [
  "fltk-sys",
  "once_cell",
  "paste",
+ "raw-window-handle",
  "ttf-parser",
 ]
 
@@ -722,6 +729,7 @@ name = "rasterizer-rs"
 version = "0.1.0"
 dependencies = [
  "env_logger",
+ "error-iter",
  "fltk",
  "log",
  "pixels",
