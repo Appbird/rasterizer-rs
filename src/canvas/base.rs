@@ -24,7 +24,7 @@ fn encode_color(color: &Color) -> u32 {
 }
 
 impl Canvas {
-    pub fn new(width:usize, height:usize) -> Result<Canvas, Box<dyn std::error::Error>>{
+    pub fn new(width:usize, height:usize) -> minifb::Result<Canvas>{
         let window = Window::new("rasterizer-rs", width, height, WindowOptions::default())?;
         let buffer = vec![0; width * height];
         let mut canvas = Canvas{window, width, height, buffer};
@@ -37,7 +37,7 @@ impl Canvas {
         let pixel_pos = y * self.width + x;
         self.buffer[pixel_pos] = encode_color(color);
     }
-    pub fn update(&mut self) -> Result<bool, Box<dyn std::error::Error>> {
+    pub fn update(&mut self) -> minifb::Result<bool> {
         self.window.update_with_buffer(&self.buffer, self.width, self.height)?;
         Ok(self.window.is_open() && !self.window.is_key_down(Key::Escape))
     }
