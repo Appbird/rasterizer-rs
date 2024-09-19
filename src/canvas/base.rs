@@ -31,11 +31,13 @@ impl Canvas {
         canvas.window.set_target_fps(24);
         Ok(canvas)
     }
-    pub fn draw_pixel(&mut self, x: usize, y:usize, color: &Color) {
-        assert!(in_range(0, x, self.width));
-        assert!(in_range(0, y, self.height));
-        let pixel_pos = y * self.width + x;
-        self.buffer[pixel_pos] = encode_color(color);
+    pub fn draw_pixel(&mut self, p: &Point2, color: &Color) {
+        let w = self.width as i32;
+        let h = self.width as i32;
+        if in_range(0, p.x, w) && in_range(0, p.y, h) {
+            let pixel_pos = p.y * w + p.x;
+            self.buffer[pixel_pos as usize] = encode_color(color);
+        }
     }
     pub fn update(&mut self) -> minifb::Result<bool> {
         self.window.update_with_buffer(&self.buffer, self.width, self.height)?;
