@@ -1,5 +1,5 @@
 use minifb::{Window, WindowOptions, Key};
-use crate::util::in_range;
+use crate::util::{in_range, Point2};
 use crate::Color;
 
 pub struct Canvas {
@@ -40,5 +40,8 @@ impl Canvas {
     pub fn update(&mut self) -> minifb::Result<bool> {
         self.window.update_with_buffer(&self.buffer, self.width, self.height)?;
         Ok(self.window.is_open() && !self.window.is_key_down(Key::Escape))
+    }
+    pub fn size(&self) -> Point2 {
+        Point2::new(self.width as i32, self.height as i32)
     }
 }

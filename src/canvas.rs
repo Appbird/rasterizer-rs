@@ -1,3 +1,3 @@
 mod base;
-mod draw_line;
+mod line;
 pub use base::Canvas;

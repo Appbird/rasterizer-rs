@@ -1,19 +1,22 @@
+use std::cmp::max;
+
 use crate::{
     canvas::Canvas,
-    util::{Color, Point2, Vec4}
+    util::{Color, Point2, Vec4, Vec4Project, Vec4Screen}
 };
 
-struct Camera {
-    canvas:Canvas
+pub struct Camera {
 }
 
 impl Camera {
-    fn new(canvas:Canvas) -> Camera{
-        Camera{canvas}
+    pub fn new() -> Camera { Camera{} }
+    pub fn draw_line(&mut self, canvas:&mut Canvas, p1:&Vec4Project, p2:&Vec4Project, color:&Color) {
+        let p1 = self.transform_into_screen(canvas.size(), &p1).to_point2();
+        let p2 = self.transform_into_screen(canvas.size(), &p2).to_point2();
+        canvas.draw_line(&p1, &p2, color);
     }
-    fn draw_line(&mut self, p1:&Vec4, p2:&Vec4, color:&Color) {
-        let p1 = Point2::new(p1.x() as i32, p1.y() as i32);
-        let p2 = Point2::new(p2.x() as i32, p2.y() as i32);
-        self.canvas.draw_line(&p1, &p2, color);
+    pub fn transform_into_screen(&self, size:Point2, p: &Vec4Project) -> Vec4Screen {
+        let scale = size.y as f64 / 2.;
+        Vec4Screen(scale * &p.0 + size.to_vec4() / 2.)
     }
 }
