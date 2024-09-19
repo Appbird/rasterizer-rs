@@ -4,6 +4,7 @@ use crate::util::{Point2, Color, in_range};
 impl Canvas {
     /**
      * 点p1から点p2への線分をBresenhamの線分描画アルゴリズムによって描画する。
+     * Color値のうち、Alpha値は無視される。
      */
     pub fn draw_line(&mut self, p1:&Point2, p2:&Point2, color: &Color) {
         // どの軸に沿って線形走査を行うかを表す。`true`ならばx軸に沿って線を描き、`false`ならy軸に沿って線を描く。
