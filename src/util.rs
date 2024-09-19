@@ -1,8 +1,8 @@
 mod point2;
-mod vec3;
+mod vec4;
 
 pub use point2::*;
-pub use vec3::*;
+pub use vec4::*;
 
 pub fn in_range<T: PartialOrd>(begin: T, x: T, end: T) -> bool {
     begin <= x && x < end
