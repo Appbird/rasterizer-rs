@@ -11,17 +11,27 @@ impl Canvas {
         let mut indecies: [usize; 3] = [0, 1, 2];
         indecies.sort_by(|a, b| points[a.clone()].y.cmp(&points[b.clone()].y));
         let [bottom, middle, top] = indecies.map(|i| points[i].clone());
-        
-        let mut iter1 = BresenhamLine::trace(&bottom, &middle);
+        let mut iter1 = [BresenhamLine::trace(&bottom, &middle), BresenhamLine::trace(&middle, &top)];
+        let mut iter1_idx = 0;
         let mut iter2 = BresenhamLine::trace(&bottom, &top);
-        let edge1 = iter1.next();
-        let edge2 = iter2.next();
         // #TODO 三角形を描く
-        for y in bottom.y .. middle.y{
-            let edge1_p = edge1.unwrap();
-            let edge2_p = edge2.unwrap();
+        for y in bottom.y .. top.y{
+            // 次のイテレータのポイントを見出す
+            let p1 =
+                if let Some(x) = iter1[iter1_idx].next() { x } else {
+                    iter1_idx += 1;
+                    iter1[iter1_idx].next().unwrap()
+                };
+            let p2 = if let Some(x) = iter2.next() { x } else { break; };
             // それぞれのイテレータの辿っている点のy座標が`y`に達するまでスキップする
-        
+            let edge1 = iter1[iter1_idx].skip_to_next_y().unwrap();
+            let edge2 = iter2.skip_to_next_y().unwrap();
+            let before = ClosedInterval::between(p1.x, p2.x);
+            let after = ClosedInterval::between(edge1.x, edge2.x);
+            let draw_interval = before.or(after);
+            for x in draw_interval {
+                
+            }
             
         }
     }

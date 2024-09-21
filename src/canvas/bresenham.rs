@@ -4,7 +4,7 @@ use crate::util::Point2;
 
 /**
  * 与えられたある2点の間を太さ1の線分で描いたときに通る画素の点を列挙するイテレータ。
- * 列挙方法はBresenhamの線分描画アルゴリズムに基づく。
+ * 列挙方法はBresenhamの線分描画アルゴリズムに基づく。 
  */
 pub struct BresenhamLineIter {
     /**
@@ -35,6 +35,10 @@ pub struct BresenhamLineIter {
 pub struct BresenhamLine();
 
 impl BresenhamLine {
+    /**
+    制約
+    - この関数から返されるイテレータは長さ1以上の系列を生み出す。
+     */
     pub fn trace(p1:&Point2, p2:&Point2) -> BresenhamLineIter {
         // どの軸に沿って線形走査を行うかを表す。`true`ならばx軸に沿って線を描き、`false`ならy軸に沿って線を描く。
         let along_x_axis = (p2.x - p1.x).abs() > (p2.y - p1.y).abs();
@@ -100,8 +104,8 @@ impl Iterator for BresenhamLineIter {
 
 
 impl BresenhamLineIter {
-    /** y値が更新される直前までイテレータを飛ばす */
-    pub fn skip_to_y(&mut self, y:i32) -> Option<Point2> {
+    /** y値が更新される直前までイテレータを飛ばす。 */
+    pub fn skip_to_next_y(&mut self) -> Option<Point2> {
         // Y軸に沿っていた場合は、その地点がすでにy値が更新される直前の点である。
         if !self.along_x_axis { return self.at(); }
         

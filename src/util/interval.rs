@@ -1,6 +1,9 @@
 use std::cmp::{max, min};
 
-
+pub struct ClosedIntervalIter {
+    current:i32,
+    end:i32
+}
 pub struct ClosedInterval {
     min:i32,
     max:i32
@@ -26,4 +29,22 @@ impl ClosedInterval {
         }
     }
     pub fn empty(self) -> bool { self.min > self.max }
+}
+
+impl Iterator for ClosedIntervalIter {
+    type Item = i32;
+    fn next(&mut self) -> Option<Self::Item> {
+        let current = self.current;
+        self.current = current + 1;
+        if self.end > current { Some(current) } else { None }
+    }
+}
+
+impl IntoIterator for ClosedInterval {
+    type Item = i32;
+    type IntoIter = ClosedIntervalIter;
+    fn into_iter(self) -> Self::IntoIter {
+        return ClosedIntervalIter{ current: self.min, end: self.max };
+    }
+
 }
