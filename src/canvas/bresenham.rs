@@ -1,4 +1,6 @@
 
+use std::cmp::min;
+
 use crate::util::Point2;
 
 /**
@@ -17,6 +19,7 @@ pub struct BresenhamLineIter {
     p2:Point2,
     /** このイテレータがどの点を指しているかを示す。 */
     current: Point2,
+    next: Point2,
     // コメント中の解説は、along_x_axis以外、全てX軸にそってアルゴリズムが動いていることを仮定して説明している。
     
     /** p2 - p1 */
@@ -51,15 +54,16 @@ impl BresenhamLine {
         let offset = Point2::new(dx, dy);
         
         // 線形走査において、正の方向に移動するか、負の方向に移動するか
-        let x_direction = if dx > 0 { 1 } else { -1 };
+        let x_direction = dx.signum();
         // 誤差が大きくなった場合に描画する画素の対象を正の方向にずらすか負の方向にずらすか
-        let y_direction = if dy > 0 { 1 } else { -1 };
+        let y_direction = dy.signum();
         let current = p1.clone();
-        let err = -dx;
+        let next = p1.clone();
+        let err = -i32::abs(dx);
 
         BresenhamLineIter{
             p2,
-            along_x_axis, current,
+            along_x_axis, current, next,
             x_direction, y_direction,
             offset, err, 
         }
@@ -85,19 +89,19 @@ impl BresenhamLineIter {
 impl Iterator for BresenhamLineIter {
     type Item = Point2;
     fn next(&mut self) -> Option<Self::Item> {
-        let result = self.at();
+        self.current = self.next.clone();
         
-        let p = &mut self.current;
+        let p = &mut self.next;
         let dx = self.offset.x;
         let dy = self.offset.y;
         p.x += self.x_direction;
         self.err += 2 * i32::abs(dy);
         if self.err > 0 {
             p.y += self.y_direction;
-            self.err -= 2 * dx;
+            self.err -= 2 * i32::abs(dx);
         }
 
-        result
+        self.at()
     }
 }
 
@@ -110,20 +114,16 @@ impl BresenhamLineIter {
         
         // X軸に沿っていた場合、イテレータを1回進めてy値が1上昇するとは限らないため
         // 次にy値が上がるまでイテレータを複数回進める（のと等価なO(1)動作を行う。）
-        let p = &mut self.current;
+        let left_step = i32::abs(self.p2.x - self.current.x);
         let dy = self.offset.y;
 
-        // self.errが0より大きくなるまでxを進める。まず、進めるべき回数を求める。
+        // self.errが0より大きくなる直前までxを進める。まず、進めるべき回数を求める。
         let err_1step = 2 * i32::abs(dy);
-        let step_x = (self.err.abs() - 1) / err_1step;
-        p.x += self.x_direction * step_x;
+        let step_x = min((self.err.abs() - 1) / err_1step, left_step);
+        // その後、その回数分だけ進めた（ことにする）
+        self.current.x += self.x_direction * step_x;
         self.err += err_1step * step_x;
 
-        self.at()
+        Some(self.current.clone())
     }
-}
-
-/** xをyで割る。ただし、あまりは切り上げる。 */
-fn ceil_div(x:i32, y:i32) -> i32 {
-    (x - 1) / y + 1
 }

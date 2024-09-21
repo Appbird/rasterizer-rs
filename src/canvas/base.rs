@@ -39,6 +39,16 @@ impl Canvas {
             self.buffer[pixel_pos as usize] = encode_color(color);
         }
     }
+    pub fn draw_point(&mut self, center:&Point2, color: &Color) {
+        let half_width = 3;
+        for x in -half_width .. half_width {
+            for y in -half_width .. half_width {
+                if x*x + y*y < half_width*half_width {
+                    self.draw_pixel(&Point2::new(center.x + x, center.y + y), color);
+                }
+            }
+        }
+    }
     pub fn update(&mut self) -> minifb::Result<bool> {
         self.window.update_with_buffer(&self.buffer, self.width, self.height)?;
         Ok(self.window.is_open() && !self.window.is_key_down(Key::Escape))

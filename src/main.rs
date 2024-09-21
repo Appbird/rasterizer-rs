@@ -1,11 +1,14 @@
 mod util;
 mod canvas;
 mod camera;
-use std::f64::consts::PI;
+mod world;
+
+use std::time::Instant;
 
 use camera::Camera;
 use canvas::Canvas;
-use util::{Color, Throwable, Vec4, Vec4Project};
+use world::*;
+use util::{Color, Throwable};
 
 fn main() -> Throwable<()> {
     let w: usize = 640;
@@ -13,17 +16,11 @@ fn main() -> Throwable<()> {
     let mut canvas = Canvas::new(w, h)?;
     let mut camera = Camera::new();
     
+    let previous_instant = Instant::now();
     while canvas.update()? {
-        for i in 0..50 {
-            let theta = -PI/2.0 + (i as f64) * 2.0*PI / 50.0;
-            let r = 1.0;
-            let p1 = Vec4::new(0., 0., 0., 0.);
-            let p2 = 
-                &(r * &Vec4::new(f64::cos(theta), f64::sin(theta), 0., 0.)) + &p1;
-            let p1 = Vec4Project(p1);
-            let p2 = Vec4Project(p2);
-            camera.draw_line(&mut canvas, &p1, &p2, &Color::new(1., 1., 1., 1.));
-        }
+        let current_instant = Instant::now();
+        let time = ((current_instant - previous_instant).as_millis() as f64) / 1000.;
+        lines(&mut camera, &mut canvas, time)?
     }
     Ok(())
 }

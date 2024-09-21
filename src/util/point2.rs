@@ -1,6 +1,6 @@
 use super::Vec4;
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Copy)]
 pub struct Point2 {
     pub x: i32,
     pub y: i32,

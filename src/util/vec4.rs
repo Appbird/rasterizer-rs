@@ -1,6 +1,7 @@
 use std::ops;
 
 use super::Point2;
+#[derive(Clone)]
 pub struct Vec4 {
     e: [f64; 4],
 }
