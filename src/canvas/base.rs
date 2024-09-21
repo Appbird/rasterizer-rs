@@ -33,7 +33,7 @@ impl Canvas {
     }
     pub fn draw_pixel(&mut self, p: &Point2, color: &Color) {
         let w = self.width as i32;
-        let h = self.width as i32;
+        let h = self.height as i32;
         if in_range(0, p.x, w) && in_range(0, p.y, h) {
             let pixel_pos = p.y * w + p.x;
             self.buffer[pixel_pos as usize] = encode_color(color);
