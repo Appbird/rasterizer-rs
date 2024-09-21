@@ -1,4 +1,3 @@
-use std::mem::swap;
 
 use crate::util::Point2;
 

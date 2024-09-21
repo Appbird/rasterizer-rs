@@ -2,7 +2,7 @@ use std::cmp::max;
 
 use crate::{
     canvas::Canvas,
-    util::{Color, Point2, Vec4, Vec4Project, Vec4Screen}
+    util::{Color, Point2, Vec4Project, Vec4Screen}
 };
 
 pub struct Camera {
