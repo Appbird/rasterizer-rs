@@ -25,6 +25,7 @@ impl Vec4 {
     pub fn y(&self) -> f64 { self.e[1] }
     pub fn z(&self) -> f64 { self.e[2] }
     pub fn w(&self) -> f64 { self.e[3] }
+    pub fn i(&self, i:usize) -> f64 { self.e[i] }
     
     pub fn new(x: f64, y: f64, z: f64, w:f64) -> Self {
         Vec4 { e: [x, y, z, w] }

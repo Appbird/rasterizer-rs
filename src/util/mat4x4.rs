@@ -17,6 +17,48 @@ impl Mat4x4 {
         }
         Mat4x4{e}
     }
+    /** Rodriguesの回転行列を使って`axis`軸周りに角度`theta`だけ点を回転させる行列を作る */
+    fn rotation(axis:Vec4, theta: f64) -> Mat4x4 {
+        let n = [axis.x(), axis.y(), axis.z()];
+        let (cos, sin) = (f64::cos(theta), f64::sin(theta));
+        let lcos = 1. - cos;
+        Self::construct(
+            |r, c|
+            if (r, c) == (3, 3) { 1. }
+            else if r == 3 || c == 3 { 0. }
+            else if r == c {
+                cos + n[r]*n[c]*lcos
+            } else {
+                let sign = if
+                    (r, c) == (2, 1) ||
+                    (r, c) == (1, 0) ||
+                    (r, c) == (0, 2)
+                { 1. } else { -1. };
+                n[r]*n[c]*lcos + sign * n[3-r-c]*sin
+            }
+        )
+    }
+    /** s倍するアフィン変換行列 */
+    fn scale(s:Vec4) -> Mat4x4 {
+        Self::construct(
+            |r, c|
+            if r != c { 0. } else { 
+                if r != 4 { s.i(r) } else { 1. }
+            }
+        )
+    }
+    /** v方向に移動させるアフィン変換行列を作る */
+    fn translate(v:Vec4) -> Mat4x4 {
+        Self::construct(
+            |r, c|
+            if r == c { 1. } else {
+                if c == 3 { v.i(r) } else { 0. }
+            }
+        )
+    }
+}
+
+impl Mat4x4 {
     /** 行列の`r`行目の行ベクトルを取り出す。 */
     fn row(&self, r:usize) -> Vec4 {
         Vec4::construct(|i| self.e[r][i])
