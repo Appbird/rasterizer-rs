@@ -17,10 +17,10 @@ fn main() -> Throwable<()> {
     let mut camera = Camera::new();
     
     let previous_instant = Instant::now();
+    triangle(&mut camera, &mut canvas)?;
     while canvas.update()? {
         let current_instant = Instant::now();
-        let time = ((current_instant - previous_instant).as_millis() as f64) / 1000.;
-        lines(&mut camera, &mut canvas, time)?
+        let _time = ((current_instant - previous_instant).as_millis() as f64) / 1000.;
     }
     Ok(())
 }

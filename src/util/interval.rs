@@ -4,6 +4,7 @@ pub struct ClosedIntervalIter {
     current:i32,
     end:i32
 }
+#[derive(Debug)]
 pub struct ClosedInterval {
     min:i32,
     max:i32

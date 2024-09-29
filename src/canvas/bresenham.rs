@@ -100,7 +100,7 @@ impl Iterator for BresenhamLineIter {
             p.y += self.y_direction;
             self.err -= 2 * i32::abs(dx);
         }
-
+        
         self.at()
     }
 }
@@ -110,20 +110,23 @@ impl BresenhamLineIter {
     /** y値が更新される直前までイテレータを飛ばす。 */
     pub fn skip_to_next_y(&mut self) -> Option<Point2> {
         // Y軸に沿っていた場合は、その地点がすでにy値が更新される直前の点である。
-        if !self.along_x_axis { return self.at(); }
+        if !self.along_x_axis || self.next.y != self.current.y {
+            return self.at();
+        }
         
         // X軸に沿っていた場合、イテレータを1回進めてy値が1上昇するとは限らないため
         // 次にy値が上がるまでイテレータを複数回進める（のと等価なO(1)動作を行う。）
         let left_step = i32::abs(self.p2.x - self.current.x);
         let dy = self.offset.y;
-
         // self.errが0より大きくなる直前までxを進める。まず、進めるべき回数を求める。
         let err_1step = 2 * i32::abs(dy);
-        let step_x = min((self.err.abs() - 1) / err_1step, left_step);
+        let step_x = min((self.err.abs()) / err_1step, left_step);
+
         // その後、その回数分だけ進めた（ことにする）
-        self.current.x += self.x_direction * step_x;
+        self.next.x += self.x_direction * step_x;
         self.err += err_1step * step_x;
 
-        Some(self.current.clone())
+        self.current = self.next.clone();
+        self.next()
     }
 }
