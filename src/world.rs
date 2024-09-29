@@ -4,7 +4,7 @@ use crate::camera::Camera;
 use crate::canvas::Canvas;
 use crate::util::{Color, Throwable, Vec4, Vec4Project};
 
-pub fn lines(camera:&mut Camera, canvas:&mut Canvas, t:f64) -> Throwable<()> {
+pub fn _lines(camera:&mut Camera, canvas:&mut Canvas, t:f64) -> Throwable<()> {
     for i in 0..50 {
         if i != (((t * 10.) as i32) % 50) { continue; }
         let theta = -PI/2.0 + (i as f64) * 2.0*PI / 50.0;
@@ -19,7 +19,7 @@ pub fn lines(camera:&mut Camera, canvas:&mut Canvas, t:f64) -> Throwable<()> {
     Ok(())
 }
 
-pub fn triangle(camera:&mut Camera, canvas:&mut Canvas) -> Throwable<()> {
+pub fn _triangle(camera:&mut Camera, canvas:&mut Canvas) -> Throwable<()> {
     let points = [
         Vec4::new(0.5, 0.2, 0., 0.),
         Vec4::new(-0.8, -0.5, 0., 0.),
@@ -36,5 +36,25 @@ pub fn triangle(camera:&mut Camera, canvas:&mut Canvas) -> Throwable<()> {
         &points[0], &points[1], &points[2],
         &white
     );
+    Ok(())
+}
+
+pub fn affine(camera:&mut Camera, canvas:&mut Canvas, t:f64) -> Throwable<()> {
+    let points = [
+        Vec4::new(0.5 * f64::sin(t), 0.25, 0., 0.),
+        Vec4::new(0.5 * f64::sin(t), 0.00, 0., 0.),
+        Vec4::new(0.0, 0.00, 0., 0.),
+        Vec4::new(0.0, 0.25, 0., 0.),
+    ];
+    let points:Vec<Vec4Project> = points.iter().map(|e| Vec4Project(e.clone())).collect();
+    let white = Color::new(1., 1., 1., 1.);
+    for point in &points {
+        camera.draw_point(canvas, point, &white);
+    }
+    for (i, j) in [(0, 1), (1, 2), (2, 3), (3, 0)] {
+        let p1 = &points[i];
+        let p2 = &points[j];
+        camera.draw_line(canvas, p1, p2, &white);
+    }
     Ok(())
 }

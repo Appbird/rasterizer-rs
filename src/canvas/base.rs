@@ -51,6 +51,11 @@ impl Canvas {
     }
     pub fn update(&mut self) -> minifb::Result<bool> {
         self.window.update_with_buffer(&self.buffer, self.width, self.height)?;
+        for y in 0 .. self.height {
+            for x in 0 .. self.width {
+                self.draw_pixel(&Point2::new(x as i32, y as i32), &Color::new(0., 0., 0., 0.));
+            }
+        }
         Ok(self.window.is_open() && !self.window.is_key_down(Key::Escape))
     }
     pub fn size(&self) -> Point2 {
