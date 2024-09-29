@@ -50,7 +50,6 @@ impl BresenhamLine {
         
         let dx = p2.x - p1.x;
         let dy = p2.y - p1.y;
-        assert!(dy.abs() < dx.abs()); // |dy/dx| < 1
         let offset = Point2::new(dx, dy);
         
         // 線形走査において、正の方向に移動するか、負の方向に移動するか
