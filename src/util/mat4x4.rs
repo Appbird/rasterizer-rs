@@ -44,7 +44,7 @@ impl Mat4x4 {
         Self::construct(
             |r, c|
             if r != c { 0. }
-            else if r != 4 { s.i(r) }
+            else if r != 3 { s.i(r) }
             else { 1. }
         )
     }

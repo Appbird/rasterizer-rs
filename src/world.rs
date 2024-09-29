@@ -2,7 +2,7 @@ use std::f64::consts::PI;
 
 use crate::camera::Camera;
 use crate::canvas::Canvas;
-use crate::util::{Color, Throwable, Vec4, Vec4Project};
+use crate::util::{Color, Mat4x4, Throwable, Vec4, Vec4Project};
 
 pub fn _lines(camera:&mut Camera, canvas:&mut Canvas, t:f64) -> Throwable<()> {
     for i in 0..50 {
@@ -41,12 +41,18 @@ pub fn _triangle(camera:&mut Camera, canvas:&mut Canvas) -> Throwable<()> {
 
 pub fn affine(camera:&mut Camera, canvas:&mut Canvas, t:f64) -> Throwable<()> {
     let points = [
-        Vec4::new(0.5 * f64::sin(t), 0.25, 0., 0.),
-        Vec4::new(0.5 * f64::sin(t), 0.00, 0., 0.),
-        Vec4::new(0.0, 0.00, 0., 0.),
-        Vec4::new(0.0, 0.25, 0., 0.),
+        Vec4::new(0.5, 0.25, 0., 1.),
+        Vec4::new(0.5, 0.00, 0., 1.),
+        Vec4::new(0.0, 0.00, 0., 1.),
+        Vec4::new(0.0, 0.25, 0., 1.),
     ];
-    let points:Vec<Vec4Project> = points.iter().map(|e| Vec4Project(e.clone())).collect();
+    let points:Vec<Vec4Project> = points.iter().map(|e| {
+        let m =
+            Mat4x4::translate(Vec4::new3d( -0.5, -0.25, 0.))
+            * Mat4x4::rotation(Vec4::new3d(0., 0., 1.), PI*t/6.)
+            * Mat4x4::scale(Vec4::new3d(0.8, 0.5, 1.));
+        Vec4Project(m * e)
+    }).collect();
     let white = Color::new(1., 1., 1., 1.);
     for point in &points {
         camera.draw_point(canvas, point, &white);
