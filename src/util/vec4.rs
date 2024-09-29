@@ -29,34 +29,44 @@ impl Vec4 {
     pub fn new(x: f64, y: f64, z: f64, w:f64) -> Self {
         Vec4 { e: [x, y, z, w] }
     }
-    pub fn zero() -> Self {
-        Vec4 { e: [0., 0., 0., 0.] }
+    pub fn from_array(v: [f64; 4]) -> Self {
+        Vec4 { e: v }
+    }
+    /** `i`番目の要素が`element(i)`であるようなベクトルを構成する。
+     * ただし、`i`について0は`x`, 1は`y`, 2は`z`, 3は`w`座標をそれぞれ示す。
+    */
+    pub fn construct<F>(element:F) -> Self
+    where 
+        F:Fn(usize) -> f64
+    {
+        Vec4::new(
+            element(0),
+            element(1),
+            element(2),
+            element(3),
+        )
     }
     fn bin<F>(lhs:&Self, rhs:&Self, op:F) -> Self
         where
         F:Fn(f64, f64) -> f64
     {
-        Vec4::new(
-            op(lhs.e[0], rhs.e[0]),
-            op(lhs.e[1], rhs.e[1]),
-            op(lhs.e[2], rhs.e[2]),
-            op(lhs.e[3], rhs.e[3]),
-        )
+        Vec4::construct(|i| op(lhs.e[i], rhs.e[i]))
     }
-    fn uni<F>(lhs:&Self, op:F) -> Self
+    fn uni<F>(operand:&Self, op:F) -> Self
         where
         F: Fn(f64) -> f64
     {
-        Vec4::new(
-            op(lhs.e[0]),
-            op(lhs.e[1]),
-            op(lhs.e[2]),
-            op(lhs.e[3]),
-        )
+        Vec4::construct(|i| op(operand.e[i]))
+    }
+    fn fold(self) -> f64 {
+        self.e.iter().fold(0., |item, r| item + r)
     }
 
     /** 要素ごとの積 */
-    pub fn hadamard(self, rhs:&Self) -> Self { Vec4::bin(&self, rhs, |a, b|{a * b}) }
+    pub fn hadamard(&self, rhs:&Self) -> Self { Vec4::bin(self, rhs, |a, b|{a * b}) }
+    /** 内積 */
+    pub fn dot(&self, rhs:&Self) -> f64 { self.hadamard(rhs).fold() }
+    
 }
 
 impl ops::Add for &Vec4 {
