@@ -1,7 +1,7 @@
 use std::ops;
 
 use super::Point2;
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Vec4 {
     e: [f64; 4],
 }
@@ -29,6 +29,9 @@ impl Vec4 {
     
     pub fn new(x: f64, y: f64, z: f64, w:f64) -> Self {
         Vec4 { e: [x, y, z, w] }
+    }
+    pub fn new3d(x: f64, y: f64, z: f64) -> Self {
+        Vec4 { e: [x, y, z, 0.] }
     }
     pub fn from_array(v: [f64; 4]) -> Self {
         Vec4 { e: v }
