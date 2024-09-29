@@ -20,15 +20,14 @@ fn main() -> Throwable<()> {
     let mut previous_instant = start_instant;
     while canvas.update()? {
         let current_instant = Instant::now();
-        let delta_time = ((current_instant - previous_instant).as_millis() as f64) / 1000.;;
+        let delta_time = ((current_instant - previous_instant).as_millis() as f64) / 1000.;
         previous_instant = current_instant;
 
-        let fps = 1.0 / delta_time;
+        let _fps = 1.0 / delta_time;
         let time = ((current_instant - start_instant).as_millis() as f64) / 1000.;
         affine(&mut camera, &mut canvas, time)?;
         
-        println!("{fps}");
-        let waiting_time = time::Duration::from_millis(20);
+        let waiting_time = time::Duration::from_millis(30);
         thread::sleep(waiting_time);
     }
     Ok(())
