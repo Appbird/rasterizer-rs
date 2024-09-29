@@ -17,9 +17,11 @@ impl Mat4x4 {
         }
         Mat4x4{e}
     }
+    /** 行列の`r`行目の行ベクトルを取り出す。 */
     fn row(&self, r:usize) -> Vec4 {
         Vec4::construct(|i| self.e[r][i])
     }
+    /** 行列の`c`列目の列ベクトルを取り出す。 */
     fn col(&self, c:usize) -> Vec4 {
         Vec4::construct(|i| self.e[i][c])
     }
