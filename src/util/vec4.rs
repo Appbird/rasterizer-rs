@@ -46,24 +46,12 @@ impl Vec4 {
             element(3),
         )
     }
-    fn bin<F>(lhs:&Self, rhs:&Self, op:F) -> Self
-        where
-        F:Fn(f64, f64) -> f64
-    {
-        Vec4::construct(|i| op(lhs.e[i], rhs.e[i]))
-    }
-    fn uni<F>(operand:&Self, op:F) -> Self
-        where
-        F: Fn(f64) -> f64
-    {
-        Vec4::construct(|i| op(operand.e[i]))
-    }
     fn fold(self) -> f64 {
         self.e.iter().fold(0., |item, r| item + r)
     }
 
     /** 要素ごとの積 */
-    pub fn hadamard(&self, rhs:&Self) -> Self { Vec4::bin(self, rhs, |a, b|{a * b}) }
+    pub fn hadamard(&self, rhs:&Self) -> Self { Vec4::construct(|i| self.e[i] * rhs.e[i]) }
     /** 内積 */
     pub fn dot(&self, rhs:&Self) -> f64 { self.hadamard(rhs).fold() }
     
@@ -72,7 +60,7 @@ impl Vec4 {
 impl ops::Add for &Vec4 {
     type Output = Vec4;
     fn add(self, rhs: Self) -> Self::Output {
-        Vec4::bin(self, rhs, |a, b|{a + b})
+        Vec4::construct(|i| self.e[i] + rhs.e[i])
     }
 }
 impl ops::Add for Vec4 {
@@ -83,7 +71,7 @@ impl ops::Add for Vec4 {
 impl ops::Sub for &Vec4 {
     type Output = Vec4;
     fn sub(self, rhs: Self) -> Self::Output {
-        Vec4::bin(&self, &rhs, |a, b|{a - b})
+        Vec4::construct(|i| self.e[i] - rhs.e[i])
     }
 }
 impl ops::Sub for Vec4 {
@@ -93,7 +81,7 @@ impl ops::Sub for Vec4 {
 impl ops::Mul<f64> for &Vec4 {
     type Output = Vec4;
     fn mul(self, rhs: f64) -> Self::Output {
-        Vec4::uni(&self, |a|{a * rhs})
+        Vec4::construct(|i| self.e[i] * rhs)
     }
 }
 impl ops::Mul<f64> for Vec4 {
@@ -109,7 +97,7 @@ impl ops::Mul<&Vec4> for f64 {
 impl ops::Div<f64> for &Vec4 {
     type Output = Vec4;
     fn div(self, rhs: f64) -> Self::Output {
-        Vec4::uni(&self, |a|{a / rhs})
+        Vec4::construct(|i| self.e[i] / rhs)
     }
 }
 impl ops::Div<f64> for Vec4 {
