@@ -19,7 +19,7 @@ impl Mat4x4 {
         Mat4x4{e}
     }
     /** Rodriguesの回転行列を使って`axis`軸周りに角度`theta`だけ点を回転させる行列を作る */
-    pub fn rotation(axis:Vec4, theta: f64) -> Mat4x4 {
+    pub fn rotation(axis:&Vec4, theta: f64) -> Mat4x4 {
         let n = [axis.x(), axis.y(), axis.z()];
         let (cos, sin) = (f64::cos(theta), f64::sin(theta));
         let lcos = 1. - cos;
@@ -40,7 +40,7 @@ impl Mat4x4 {
         )
     }
     /** s倍するアフィン変換行列 */
-    pub fn scale(s:Vec4) -> Mat4x4 {
+    pub fn scale(s:&Vec4) -> Mat4x4 {
         Self::construct(
             |r, c|
             if r != c { 0. }
@@ -49,7 +49,7 @@ impl Mat4x4 {
         )
     }
     /** v方向に移動させるアフィン変換行列を作る */
-    pub fn translate(v:Vec4) -> Mat4x4 {
+    pub fn translate(v:&Vec4) -> Mat4x4 {
         Self::construct(
             |r, c|
             if r == c { 1. }
