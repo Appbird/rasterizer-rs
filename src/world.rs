@@ -46,13 +46,15 @@ pub fn affine(camera:&mut Camera, canvas:&mut Canvas, t:f64) -> Throwable<()> {
         Vec4::new(0.0, 0.00, 0., 1.),
         Vec4::new(0.0, 0.25, 0., 1.),
     ];
+    
     let points:Vec<Vec4Project> = points.iter().map(|e| {
         let m =
-            Mat4x4::translate(Vec4::new3d( -0.5, -0.25, 0.))
-            * Mat4x4::rotation(Vec4::new3d(0., 0., 1.), PI*t/6.)
-            * Mat4x4::scale(Vec4::new3d(0.8, 0.5, 1.));
+            Mat4x4::translate(&Vec4::new3d( -0.5, -0.25, 0.))
+            * Mat4x4::rotation(&Vec4::new3d(0., 0., 1.), PI*t/6.)
+            * Mat4x4::scale(&Vec4::new3d(0.8, 0.5, 1.));
         Vec4Project(m * e)
     }).collect();
+
     let white = Color::new(1., 1., 1., 1.);
     for point in &points {
         camera.draw_point(canvas, point, &white);
