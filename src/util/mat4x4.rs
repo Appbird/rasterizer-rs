@@ -18,6 +18,12 @@ impl Mat4x4 {
         }
         Mat4x4{e}
     }
+    pub fn from_array(element:[[f64; 4]; 4]) -> Mat4x4 {
+        Mat4x4{ e:element }
+    }
+    pub fn identity() -> Mat4x4 {
+        Self::construct(|r, c| if r == c { 1. } else { 0. } )
+    }
     /** Rodriguesの回転行列を使って`axis`軸周りに角度`theta`だけ点を回転させる行列を作る */
     pub fn rotation(axis:&Vec4, theta: f64) -> Mat4x4 {
         let n = [axis.x(), axis.y(), axis.z()];
@@ -76,10 +82,23 @@ impl Mul<&Vec4> for Mat4x4 {
         Vec4::construct(|r| self.row(r).dot(&rhs))
     }
 }
+impl Mul<&Vec4> for &Mat4x4 {
+    type Output = Vec4;
+    fn mul(self, rhs: &Vec4) -> Self::Output {
+        Vec4::construct(|r| self.row(r).dot(&rhs))
+    }
+}
 
 impl Mul for Mat4x4 {
     type Output = Mat4x4;
     fn mul(self, rhs: Mat4x4) -> Self::Output {
+        Mat4x4::construct(|r, c| self.row(r).dot(&rhs.col(c)))
+    }
+}
+
+impl Mul for &Mat4x4 {
+    type Output = Mat4x4;
+    fn mul(self, rhs: &Mat4x4) -> Self::Output {
         Mat4x4::construct(|r, c| self.row(r).dot(&rhs.col(c)))
     }
 }
