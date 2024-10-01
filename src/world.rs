@@ -70,7 +70,7 @@ pub fn affine(camera:&mut Camera, canvas:&mut Canvas, t:f64) -> Throwable<()> {
     Ok(())
 }
 
-fn conversion_3d(camera:&mut Camera, canvas:&mut Canvas) -> Throwable<()> {
+pub fn conversion_3d(camera:&mut Camera, canvas:&mut Canvas) -> Throwable<()> {
     let start_instant = Instant::now();
     let mut previous_instant = start_instant;    
     let blue = Vec4::new3d(0.2, 0.2, 0.9);
