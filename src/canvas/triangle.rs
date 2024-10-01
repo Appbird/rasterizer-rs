@@ -1,5 +1,5 @@
+use crate::{snapshot, assert_cond};
 use crate::util::{ClosedInterval, Color, Point2};
-
 use super::{bresenham::BresenhamLine, Canvas};
 
 impl Canvas {
@@ -33,14 +33,17 @@ impl Canvas {
                 };
             let p2 =
                 if let Some(x) = iter2.next() { x } else { break; };
+            snapshot!(p1);
+            snapshot!(p2);
             // それぞれのイテレータの辿っている点のy座標が`y`に達するまでスキップする
             let edge1 = iter1[iter1_idx].skip_to_next_y().unwrap();
             let edge2 = iter2.skip_to_next_y().unwrap();
-
-            assert_eq!(p1.y, y);
-            assert_eq!(p1.y, edge1.y);
-            assert_eq!(p2.y, y);
-            assert_eq!(p2.y, edge2.y);
+            snapshot!(edge1);
+            snapshot!(edge2);
+            assert_cond!(p1.y, y);
+            assert_cond!(p1.y, edge1.y);
+            assert_cond!(p2.y, y);
+            assert_cond!(p2.y, edge2.y);
 
             let before = ClosedInterval::between(p1.x, p2.x);
             let after = ClosedInterval::between(edge1.x, edge2.x);

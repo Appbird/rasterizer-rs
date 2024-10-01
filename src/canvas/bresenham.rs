@@ -1,13 +1,14 @@
 
 use std::cmp::min;
 
-use crate::util::Point2;
+use crate::{snapshot, util::Point2};
 
 /**
  * 与えられたある2点の間を太さ1の線分で描いたときに通る画素の点を列挙するイテレータ。
  * 列挙方法はBresenhamの線分描画アルゴリズムに基づく。 
  */
-pub struct BresenhamLineIter {
+#[derive(Debug)]
+ pub struct BresenhamLineIter {
     /**
      * `true`: BresenhamのアルゴリズムがX軸に沿って動いている
      * （i.e. 線分の存在する範囲内の任意のx整数値に対して、ある値yがただ一つ存在し、点(x, y)がプロットされている。）
@@ -59,7 +60,6 @@ impl BresenhamLine {
         let current = p1.clone();
         let next = p1.clone();
         let err = -i32::abs(dx);
-
         BresenhamLineIter{
             p2,
             along_x_axis, current, next,
@@ -99,31 +99,42 @@ impl Iterator for BresenhamLineIter {
             p.y += self.y_direction;
             self.err -= 2 * i32::abs(dx);
         }
-        
+        snapshot!(self.current);
+        snapshot!(self.next);
         self.at()
     }
 }
 
 
 impl BresenhamLineIter {
-    /** y値が更新される直前までイテレータを飛ばす。 */
-    pub fn skip_to_next_y(&mut self) -> Option<Point2> {
+    /** y値が指定されたyになる直前までイテレータを飛ばす。 */
+    pub fn skip_to_y(&mut self, y:i32) -> Option<Point2> {
         // Y軸に沿っていた場合は、その地点がすでにy値が更新される直前の点である。
-        if !self.along_x_axis || self.next.y != self.current.y {
+        if self.next.y == y {
             return self.at();
         }
         
         // X軸に沿っていた場合、イテレータを1回進めてy値が1上昇するとは限らないため
         // 次にy値が上がるまでイテレータを複数回進める（のと等価なO(1)動作を行う。）
         let left_step = i32::abs(self.p2.x - self.current.x);
+        let dx = self.offset.x;
         let dy = self.offset.y;
+        
+        //TODO: y軸に沿っていく場合を書く。
+
         // self.errが0より大きくなる直前までxを進める。まず、進めるべき回数を求める。
-        let err_1step = 2 * i32::abs(dy);
-        let step_x = min((self.err.abs()) / err_1step, left_step);
+        // xが1進むと累積誤差がどれだけ変化するか
+        let err_x1step = 2 * i32::abs(dy);
+        // yが1進むと累積誤差がどれだけ変化するか
+        let err_y1step = -2 * i32::abs(dx);
+        
+        // 指定されたy値に到達するまでに、あとどれぐらい累積誤差を貯める必要があるかを考える。
+        self.err += (y - self.next.y) * err_y1step;
+        let step_x = min((self.err.abs()) / err_x1step, left_step);
 
         // その後、その回数分だけ進めた（ことにする）
         self.next.x += self.x_direction * step_x;
-        self.err += err_1step * step_x;
+        self.err += err_x1step * step_x;
 
         self.current = self.next.clone();
         self.next()
