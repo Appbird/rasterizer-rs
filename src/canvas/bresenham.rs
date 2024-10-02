@@ -108,6 +108,7 @@ impl Iterator for BresenhamLineIter {
 
 impl BresenhamLineIter {
     /** y値が指定されたyになる直前までイテレータを飛ばす。 */
+    // #TODO なにかまだバグがある
     pub fn skip_to_y(&mut self, y:i32) -> Option<Point2> {
         // Y軸に沿っていた場合は、その地点がすでにy値が更新される直前の点である。
         if self.next.y == y {
