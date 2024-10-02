@@ -3,6 +3,7 @@ use std::cmp::min;
 
 use crate::{snapshot, util::Point2};
 
+
 /**
  * 与えられたある2点の間を太さ1の線分で描いたときに通る画素の点を列挙するイテレータ。
  * 列挙方法はBresenhamの線分描画アルゴリズムに基づく。 
@@ -67,7 +68,6 @@ impl BresenhamLine {
             offset, err, 
         }
     }
-    
 }
 
 impl BresenhamLineIter {
@@ -114,28 +114,41 @@ impl BresenhamLineIter {
             return self.at();
         }
         
-        // X軸に沿っていた場合、イテレータを1回進めてy値が1上昇するとは限らないため
-        // 次にy値が上がるまでイテレータを複数回進める（のと等価なO(1)動作を行う。）
-        let left_step = i32::abs(self.p2.x - self.current.x);
-        let dx = self.offset.x;
-        let dy = self.offset.y;
+        let (step_x, step_y) = {
+            // アルゴリズムが軸に沿う側(vertical)について、後どれだけ進められるか
+            let left_steph= i32::abs(self.p2.x - self.current.x);
+            // アルゴリズムが軸に沿わない側(horizontal)について、後どれだけ進められるか
+            let left_stepv= i32::abs(self.p2.y - self.current.y);
+            let left_stepx = if self.along_x_axis { left_steph } else { left_stepv };
+            let left_stepy = if self.along_x_axis { left_stepv } else { left_steph };
+
+            let dx = if self.along_x_axis { self.offset.x } else { self.offset.y };
+            let dx = i32::abs(dx);
+            let dy = if self.along_x_axis { self.offset.y } else { self.offset.x };
+            let dy = i32::abs(dy);
+
+            // yを何回進めるべきか
+            let step_y = min(i32::abs(y - self.next.y), left_stepy);
+            // xを何回進めるべきか
+            let step_x = min((dx * step_y - 1) / dy, left_stepx);
+            (step_x, step_y)
+        };
+
+        // アルゴリズムが沿った側の軸(horizontal)において1進むと、誤差がどれだけ変化するかを表す。
+        let h1step_err = 2 * i32::abs(self.offset.x);
+        // アルゴリズムが沿わなかった側の軸(vertical)において1進むと、誤差がどれだけ変化するかを表す。
+        let v1step_err = 2 * i32::abs(self.offset.y);
         
-        //TODO: y軸に沿っていく場合を書く。
-
-        // self.errが0より大きくなる直前までxを進める。まず、進めるべき回数を求める。
-        // xが1進むと累積誤差がどれだけ変化するか
-        let err_x1step = 2 * i32::abs(dy);
-        // yが1進むと累積誤差がどれだけ変化するか
-        let err_y1step = -2 * i32::abs(dx);
+        self.err += 
+            if self.along_x_axis {
+                h1step_err*step_x - v1step_err*step_y
+            } else {
+                h1step_err*step_y - v1step_err*step_x
+            };
         
-        // 指定されたy値に到達するまでに、あとどれぐらい累積誤差を貯める必要があるかを考える。
-        self.err += (y - self.next.y) * err_y1step;
-        let step_x = min((self.err.abs()) / err_x1step, left_step);
-
-        // その後、その回数分だけ進めた（ことにする）
-        self.next.x += self.x_direction * step_x;
-        self.err += err_x1step * step_x;
-
+        self.next.x += step_x;
+        self.next.y += step_y;
+        
         self.current = self.next.clone();
         self.next()
     }

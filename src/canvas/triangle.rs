@@ -28,16 +28,16 @@ impl Canvas {
                 if let Some(x) = iter1[iter1_idx].next() { x } else {
                     assert!(iter1_idx == 0);
                     iter1_idx += 1;
-                    iter1[iter1_idx].skip_to_next_y();
+                    iter1[iter1_idx].skip_to_y(y);
                     iter1[iter1_idx].next().unwrap()
                 };
             let p2 =
                 if let Some(x) = iter2.next() { x } else { break; };
             snapshot!(p1);
             snapshot!(p2);
-            // それぞれのイテレータの辿っている点のy座標が`y`に達するまでスキップする
-            let edge1 = iter1[iter1_idx].skip_to_next_y().unwrap();
-            let edge2 = iter2.skip_to_next_y().unwrap();
+            // それぞれのイテレータの辿っている点のy座標が`y`に達する直前までスキップする
+            let edge1 = iter1[iter1_idx].skip_to_y(p1.y + 1).unwrap();
+            let edge2 = iter2.skip_to_y(p1.y + 1).unwrap();
             snapshot!(edge1);
             snapshot!(edge2);
             assert_cond!(p1.y, y);
