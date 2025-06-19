@@ -1,5 +1,5 @@
 use crate::{
-    actor::Actor, canvas::Canvas, util::{Color, Mat4x4, Point2, Vec4, Vec4Project, Vec4Screen}
+    actor::Actor, canvas::Canvas, snapshot, util::{Color, Mat4x4, Point2, Vec4, Vec4Project, Vec4Screen}
 };
 use std::f64::consts::PI;
 

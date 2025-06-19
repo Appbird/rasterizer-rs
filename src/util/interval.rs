@@ -17,6 +17,23 @@ impl ClosedInterval {
     pub fn between(a:i32, b:i32) -> ClosedInterval {
         ClosedInterval{ min: min(a, b), max: max(a, b) }   
     }
+	
+	pub fn range<I>(iter: I) -> ClosedInterval
+	where
+		I: IntoIterator<Item = i32>
+	{
+		let mut iter = iter.into_iter();
+		if let Some(first) = iter.next() {
+			let (mut min_val, mut max_val) = (first, first);
+			for v in iter {
+				if v < min_val { min_val = v; }
+				if v > max_val { max_val = v; }
+			}
+			ClosedInterval { min: min_val, max: max_val }
+		} else {
+			ClosedInterval { min: 0, max: -1 } // empty interval
+		}
+	}
     pub fn and(self, i:ClosedInterval) -> ClosedInterval {
         ClosedInterval{
             min: max(self.min, i.min),

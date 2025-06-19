@@ -1,3 +1,5 @@
+use std::ops;
+
 use super::Vec4;
 
 #[derive(Clone, Debug, Copy)]
@@ -16,4 +18,31 @@ impl Point2 {
     pub fn to_vec4(self) -> Vec4 {
         Vec4::new(self.x as f64, self.y as f64, 0., 0.)
     }
+	pub fn at(&self, idx:usize) -> &i32 {
+		return if idx == 0 { &self.x } else { &self.y };
+	}
+	
+}
+
+
+impl ops::Add for &Point2 {
+    type Output = Point2;
+    fn add(self, rhs: Self) -> Self::Output {
+        Point2::new(self.x + rhs.x, self.y + rhs.y )
+    }
+}
+impl ops::Add for Point2 {
+    type Output = Point2;
+    fn add(self, rhs: Self) -> Self::Output { &self + &rhs }
+}
+
+impl ops::Sub for &Point2 {
+    type Output = Point2;
+    fn sub(self, rhs: Self) -> Self::Output {
+        Point2::new(self.x - rhs.x, self.y - rhs.y )
+    }
+}
+impl ops::Sub for Point2 {
+    type Output = Point2;
+    fn sub(self, rhs: Self) -> Self::Output { &self - &rhs }
 }

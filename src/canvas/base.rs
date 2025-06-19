@@ -1,6 +1,7 @@
 use minifb::{Window, WindowOptions, Key};
+use crate::snapshot;
 use crate::util::{in_range, Point2};
-use crate::Color;
+use crate::util::Color;
 
 pub struct Canvas {
     window:Window,
@@ -19,7 +20,7 @@ fn encode_color(color: &Color) -> u32 {
         (r * 255.999).floor() as u32,
         (g * 255.999).floor() as u32,
         (b * 255.999).floor() as u32
-    );
+    ); 
     return (r << 8 * 2) | (g << 8 * 1) | (b << 8 * 0);
 }
 
@@ -28,7 +29,7 @@ impl Canvas {
         let window = Window::new("rasterizer-rs", width, height, WindowOptions::default())?;
         let buffer = vec![0; width * height];
         let mut canvas = Canvas{window, width, height, buffer};
-        canvas.window.set_target_fps(24);
+        canvas.window.set_target_fps(60);
         Ok(canvas)
     }
     pub fn draw_pixel(&mut self, p: &Point2, color: &Color) {
