@@ -22,9 +22,9 @@ fn main() -> Throwable<()> {
 		let t = stopwatch.elapsed_as_sec();
 		let points:Vec<Vec4Project> = points.iter().map(|e| {
 			let m =
-				Mat4x4::translate(&Vec4::new3d( -0.5, -0.25, 0.))
-				* Mat4x4::rotation(&Vec4::new3d(0., 0., 1.), PI*t/6.)
-				* Mat4x4::scale(&Vec4::new3d(0.8, 0.5, 1.));
+				Mat4x4::translate(&Vec4::newvec( -0.5, -0.25, 0.))
+				* Mat4x4::rotation(&Vec4::newvec(0., 0., 1.), PI*t/6.)
+				* Mat4x4::scale(&Vec4::newvec(0.8, 0.5, 1.));
 			Vec4Project(m * e)
 		}).collect();
 

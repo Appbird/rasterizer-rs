@@ -53,7 +53,7 @@ impl Canvas {
     pub fn update(&mut self) -> minifb::Result<bool> {
         self.window.update_with_buffer(&self.buffer, self.width, self.height)?;
         for i in 0 .. self.width * self.height {
-            self.buffer[i] = encode_color(&Color::new3d(0., 0., 0.));
+            self.buffer[i] = encode_color(&Color::newvec(0., 0., 0.));
         }
         Ok(self.window.is_open() && !self.window.is_key_down(Key::Escape))
     }

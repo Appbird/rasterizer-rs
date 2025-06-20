@@ -1,3 +1,4 @@
+use std::f32::consts::PI;
 use std::{thread, time};
 
 use rasterizer_rs::actor::Actor;
@@ -9,25 +10,29 @@ pub fn conversion_3d(camera:&mut Camera, canvas:&mut Canvas) -> Throwable<()> {
     let mut stopwatch = Stopwatch::new();
 	stopwatch.start();
     let mut previous_instant = 0.0;
-    let blue = Vec4::new3d(0.2, 0.2, 0.9);
-    let green = Vec4::new3d(0.2, 0.9, 0.2);
+    let blue = Vec4::newvec(0.2, 0.2, 0.9);
+    let green = Vec4::newvec(0.2, 0.9, 0.2);
+	let red = Vec4::newvec(0.9, 0.2, 0.2);
     let world:Vec<Actor> = vec![
         Actor{
-            vertices: [Vec4::new3d(0., 0., 0.), Vec4::new3d(3., 1., 2.)/5., Vec4::new3d(0., -3., 4.)/5.],
-            position: Vec4::new3d(0., 0., 0.),
-            axis: Vec4::new3d(0., 0., 0.),
+            vertices: [Vec4::newvec(0., 0., 0.), Vec4::newvec(3., 1., 2.)/5., Vec4::newvec(0., -3., 4.)/5.],
+            position: Vec4::newvec(0., 0., 0.),
+            axis: Vec4::newvec(0., 0., 0.),
             theta: 0.0,
-            color: blue
+            color: [blue.clone(), green.clone(), red.clone()]
         },
         Actor{
-            vertices: [Vec4::new3d(0., 4., -5.)/5., Vec4::new3d(-3., -1., -2.)/5., Vec4::new3d(0., 3., 4.)/5.],
-            position: Vec4::new3d(0., 0., 0.),
-            axis: Vec4::new3d(0., 0., 0.),
+            vertices: [Vec4::newvec(0., 4., -5.)/5., Vec4::newvec(-3., -1., -2.)/5., Vec4::newvec(0., 3., 4.)/5.],
+            position: Vec4::newvec(0., 0., 0.),
+            axis: Vec4::newvec(0., 0., 0.),
             theta: 0.0,
-            color: green
+            color: [green.clone(), blue.clone(), blue.clone()]
         }
     ];
     while canvas.update()? {
+		let theta = PI/6;
+		camera.location = Vec4{f64::cos()};
+		
         let current_instant = stopwatch.elapsed_as_sec();
         let delta_time = (current_instant - previous_instant) / 1000.;
         previous_instant = current_instant;

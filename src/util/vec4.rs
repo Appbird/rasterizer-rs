@@ -7,7 +7,7 @@ pub struct Vec4 {
 }
 
 pub type Color = Vec4;
-
+#[derive(Clone, Debug)]
 pub struct Vec4Screen(pub Vec4);
 impl Vec4Screen {
     /** このVec4のx, y要素をとった新たなPoint2を作る */
@@ -15,9 +15,13 @@ impl Vec4Screen {
         Point2::new(self.0.x() as i32, self.0.y() as i32)
     }
 }
+#[derive(Clone, Debug)]
 pub struct Vec4Project(pub Vec4);
+#[derive(Clone, Debug)]
 pub struct Vec4View(pub Vec4);
+#[derive(Clone, Debug)]
 pub struct Vec4World(pub Vec4);
+#[derive(Clone, Debug)]
 pub struct Vec4Model(pub Vec4);
 
 impl Vec4 {
@@ -30,8 +34,11 @@ impl Vec4 {
     pub fn new(x: f64, y: f64, z: f64, w:f64) -> Self {
         Vec4 { e: [x, y, z, w] }
     }
-    pub fn new3d(x: f64, y: f64, z: f64) -> Self {
+    pub fn newvec(x: f64, y: f64, z: f64) -> Self {
         Vec4 { e: [x, y, z, 0.] }
+    }
+	pub fn newpoints(x: f64, y: f64, z: f64) -> Self {
+        Vec4 { e: [x, y, z, 1.] }
     }
     pub fn from_array(v: [f64; 4]) -> Self {
         Vec4 { e: v }

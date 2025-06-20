@@ -10,13 +10,17 @@ fn main() -> Throwable<()> {
     let mut camera = Camera::new(aspect);
     
     
-    let points = [
+    let points: [Vec4; 3] = [
         Vec4::new(0.5, 0.2, 0., 0.),
         Vec4::new(-0.8, -0.5, 0., 0.),
         Vec4::new(-0.5, 0.5, 0., 0.)
     ];
-    let points:Vec<Vec4Project> = points.iter().map(|e| Vec4Project(e.clone())).collect();
-    let white = Color::new(1., 1., 1., 1.);
+	let colors: [Vec4; 3] = [
+        Vec4::new(0.2, 0.2, 0.9, 0.),
+        Vec4::new(0.2, 0.9, 0.2, 0.),
+        Vec4::new(0.9, 0.2, 0.2, 0.),
+    ];
+    let points: [Vec4Project; 3] = points.iter().map(|e| Vec4Project(e.clone())).collect::<Vec<_>>().try_into().unwrap();
     let red = Color::new(1., 0., 0., 1.);
     for point in &points {
         camera.draw_point(&mut canvas, &point, &red);
@@ -24,8 +28,8 @@ fn main() -> Throwable<()> {
 	while canvas.update()? {
 		camera.draw_triangle(
 			&mut canvas,
-			&points[0], &points[1], &points[2],
-			&white
+			&[points[0].clone(), points[1].clone(), points[2].clone()],
+			&colors
 		);
 	}
     Ok(())

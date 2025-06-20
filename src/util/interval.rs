@@ -59,10 +59,17 @@ impl Iterator for ClosedIntervalIter {
 }
 
 impl IntoIterator for ClosedInterval {
-    type Item = i32;
-    type IntoIter = ClosedIntervalIter;
-    fn into_iter(self) -> Self::IntoIter {
-        return ClosedIntervalIter{ current: self.min, end: self.max };
-    }
+	type Item = i32;
+	type IntoIter = ClosedIntervalIter;
+	fn into_iter(self) -> Self::IntoIter {
+		ClosedIntervalIter { current: self.min, end: self.max }
+	}
+}
 
+impl IntoIterator for &ClosedInterval {
+	type Item = i32;
+	type IntoIter = ClosedIntervalIter;
+	fn into_iter(self) -> Self::IntoIter {
+		ClosedIntervalIter { current: self.min, end: self.max }
+	}
 }

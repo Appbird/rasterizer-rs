@@ -5,7 +5,7 @@ pub struct Actor {
     pub position:Vec4,
     pub axis:Vec4,
     pub theta:f64,
-    pub color: Vec4
+    pub color: [Vec4; 3]
 }
 
 impl Actor {

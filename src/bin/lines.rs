@@ -1,9 +1,7 @@
 use std::f64::consts::PI;
-use std::{thread, time};
 
 use rasterizer_rs::camera::Camera;
 use rasterizer_rs::canvas::Canvas;
-use rasterizer_rs::snapshot;
 use rasterizer_rs::util::{Color, Stopwatch, Throwable, Vec4, Vec4Project};
 
 fn main() -> Throwable<()> {

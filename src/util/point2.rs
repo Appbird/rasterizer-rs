@@ -19,7 +19,13 @@ impl Point2 {
         Vec4::new(self.x as f64, self.y as f64, 0., 0.)
     }
 	pub fn at(&self, idx:usize) -> &i32 {
-		return if idx == 0 { &self.x } else { &self.y };
+		if idx == 0 { &self.x } else { &self.y }
+	}
+	pub fn dot(&self, rhs:&Self) -> i32 {
+		&self.x * rhs.x  + &self.y * rhs.y
+	}
+	pub fn cross(&self, rhs:&Self) -> i32 {
+		self.x * rhs.y - self.y * rhs.x
 	}
 	
 }
