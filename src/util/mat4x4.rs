@@ -54,6 +54,15 @@ impl Mat4x4 {
             else { 1. }
         )
     }
+	/** xyz方向にs倍するアフィン変換行列 */
+    pub fn scale_xyz(s:&f64) -> Mat4x4 {
+        Self::construct(
+            |r, c|
+            if r != c { 0. }
+            else if r != 3 { s.clone() }
+            else { 1. }
+        )
+    }
     /** v方向に移動させるアフィン変換行列を作る */
     pub fn translate(v:&Vec4) -> Mat4x4 {
         Self::construct(

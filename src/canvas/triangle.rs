@@ -1,4 +1,4 @@
-use crate::{canvas::line::Line, util::{ClosedInterval, Color, Point2}};
+use crate::{canvas::line::Line, snapshot, util::{ClosedInterval, Color, Point2}};
 use super::Canvas;
 
 fn area(p0:&Point2, p1:&Point2, p2:&Point2) -> f64 {
@@ -16,7 +16,8 @@ impl Canvas {
         indecies.sort_by(|a, b| points[a.clone()].y.cmp(&points[b.clone()].y));
 		let bound_x = ClosedInterval::between(0,(self.width-1) as i32);
 		let bound_y = ClosedInterval::between(0,(self.height-1) as i32);
-		let range_y = ClosedInterval::range(points.map(|p| p.y.clone()));
+		snapshot!(points);
+		let y_segment = ClosedInterval::range(points.map(|p| p.y.clone()));
 		let [bottom, middle, top] = indecies.map(|i| points[i.clone()]);
 		let lines = [
 			Line::new(bottom, middle),
@@ -24,12 +25,12 @@ impl Canvas {
 			Line::new(bottom, top),
 		];
 		let inv_abc = 1./area(&points[0], &points[1], &points[2]);
-		for y in &range_y.and(&bound_y) {
+		for y in &y_segment.and(&bound_y) {
 			let edge = if y < middle.y { &lines[0] } else { &lines[1] };
 			let i_edge1 = lines[2].across_y(y);
 			let i_edge2 = edge.across_y(y);
-			let segment = (i_edge1.or(i_edge2)).and(&bound_x);
-			for x in &segment {
+			let x_segment = i_edge1.or(i_edge2);
+			for x in &x_segment.and(&bound_x) {
 				let p = Point2{x, y};
 				let w0 = area(&points[1], &points[2], &p) * inv_abc;
 				let w1 = area(&points[2], &points[0], &p) * inv_abc;

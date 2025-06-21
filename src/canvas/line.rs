@@ -7,13 +7,13 @@ pub struct Line {
 	p2: Point2
 }
 
-fn round_div(n:i64, d:i64) -> i32 {
+fn round_div(n:i64, d:i64) -> i64 {
     if d < 0 {
 		round_div(-n, -d)
 	} else if n >= 0 {
-        ((n + d/2) / d) as i32
+        (n + d/2) / d
     } else {
-        -((-n + d/2) / d) as i32
+        -((-n + d/2) / d)
     }
 }
 
@@ -30,9 +30,9 @@ impl Line {
 		let delta_x = delta.x as i64;
 		let delta_y = delta.y as i64;
 		let y_y1 = (y - self.p1.y) as i64;
-		let x0 = self.p1.x + round_div(delta_x*y_y1, delta_y);
-		let x1 = self.p1.x + round_div(delta_x*(y_y1+1), delta_y);
-		ClosedInterval::between(x0, x1)
+		let x0 = self.p1.x as i64 + round_div(delta_x*y_y1, delta_y);
+		let x1 = self.p1.x as i64 + round_div(delta_x*(y_y1+1), delta_y);
+		ClosedInterval::between(x0 as i32, x1 as i32)
 	}
 }
 
