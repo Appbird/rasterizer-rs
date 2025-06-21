@@ -1,5 +1,4 @@
 use minifb::{Window, WindowOptions, Key};
-use crate::snapshot;
 use crate::util::{in_range, Point2};
 use crate::util::Color;
 

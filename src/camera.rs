@@ -8,7 +8,7 @@ pub struct Camera {
     pub far:f64,
     pub width:f64,
     pub height:f64,
-	pub location:Vec4
+	pub position:Vec4
 }
 
 impl Camera {
@@ -20,7 +20,7 @@ impl Camera {
             far: 1000.,
             width,
             height: width * aspect,
-			location: Vec4::newvec(0., 0., 0.)
+			position: Vec4::newvec(0., 0., 0.)
         }
     }
 	pub fn place(aspect: f64) -> Camera {
@@ -31,7 +31,7 @@ impl Camera {
             far: 1000.,
             width,
             height: width * aspect,
-			location: Vec4::newvec(0., 0., 0.)
+			position: Vec4::newvec(0., 0., 0.)
         }
     }
     pub fn snapshot(&mut self, canvas:&mut Canvas, actors:&Vec<Actor>) {
@@ -63,13 +63,7 @@ impl Camera {
         ])
     }
 	pub fn view_conversion(&self) -> Mat4x4 {
-        let p = &self.location;
-        Mat4x4::from_array([
-            [ 1.,   0.,     0.,     -p.x()  ],
-            [ 0.,   1.,		0.,     -p.y()  ],
-            [ 0.,   0.,		1.,     -p.z()  ],
-            [ 0.,   0.,		0.,     1.  ],
-        ])
+        Mat4x4::translate(&-(&self.position))
     }
 	
     pub fn draw_point(&mut self, canvas:&mut Canvas, p1:&Vec4Project, color:&Color) {

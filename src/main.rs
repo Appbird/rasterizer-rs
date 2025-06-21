@@ -1,42 +1,43 @@
-use std::{thread, time};
+use std::f64::consts::PI;
 
 use rasterizer_rs::actor::Actor;
 use rasterizer_rs::camera::Camera;
 use rasterizer_rs::canvas::Canvas;
+use rasterizer_rs::snapshot;
 use rasterizer_rs::util::{Stopwatch, Throwable, Vec4};
 
 pub fn conversion_3d(camera:&mut Camera, canvas:&mut Canvas) -> Throwable<()> {
     let mut stopwatch = Stopwatch::new();
 	stopwatch.start();
-    let mut previous_instant = 0.0;
     let blue = Vec4::newvec(0.2, 0.2, 0.9);
     let green = Vec4::newvec(0.2, 0.9, 0.2);
 	let red = Vec4::newvec(0.9, 0.2, 0.2);
     let world:Vec<Actor> = vec![
         Actor{
-            vertices: [Vec4::newvec(0., 0., 0.), Vec4::newvec(3., 1., 2.)/5., Vec4::newvec(0., -3., 4.)/5.],
-            position: Vec4::newvec(0., 0., 0.),
+            vertices: [Vec4::newpoint(0., 0., 0.), Vec4::newpoint(3., 1., 2.)/3., Vec4::newpoint(0., -3., 4.)/3.],
+            position: Vec4::newpoint(0., 0., 0.),
             axis: Vec4::newvec(0., 0., 0.),
             theta: 0.0,
             color: [blue.clone(), green.clone(), red.clone()]
         },
         Actor{
-            vertices: [Vec4::newvec(0., 4., -5.)/5., Vec4::newvec(-3., -1., -2.)/5., Vec4::newvec(0., 3., 4.)/5.],
+            vertices: [Vec4::newpoint(0., 4., -5.)/3., Vec4::newpoint(-3., -1., -2.)/3., Vec4::newpoint(0., 3., 4.)/3.],
             position: Vec4::newvec(0., 0., 0.),
             axis: Vec4::newvec(0., 0., 0.),
             theta: 0.0,
             color: [green.clone(), blue.clone(), blue.clone()]
         }
     ];
+	let k = 2.*PI / 5.;
     while canvas.update()? {
-        let current_instant = stopwatch.elapsed_as_sec();
-        let delta_time = (current_instant - previous_instant) / 1000.;
-        previous_instant = current_instant;
+        let t = stopwatch.elapsed_as_sec();
+		camera.position = Vec4::newpoint(0., 0., f64::sin(k*t))*2.;
+		/*
+        let delta_time = (t - previous_instant) / 1000.;
+        previous_instant = t;
         let _fps = 1.0 / delta_time;
+		*/
         camera.snapshot(canvas, &world);
-        
-        let waiting_time = time::Duration::from_millis(30);
-        thread::sleep(waiting_time);
     }
     Ok(())
 }

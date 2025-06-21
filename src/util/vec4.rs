@@ -37,7 +37,7 @@ impl Vec4 {
     pub fn newvec(x: f64, y: f64, z: f64) -> Self {
         Vec4 { e: [x, y, z, 0.] }
     }
-	pub fn newpoints(x: f64, y: f64, z: f64) -> Self {
+	pub fn newpoint(x: f64, y: f64, z: f64) -> Self {
         Vec4 { e: [x, y, z, 1.] }
     }
     pub fn from_array(v: [f64; 4]) -> Self {
@@ -80,11 +80,27 @@ impl ops::Add for Vec4 {
 }
 
 impl ops::Sub for &Vec4 {
-    type Output = Vec4;
-    fn sub(self, rhs: Self) -> Self::Output {
-        Vec4::construct(|i| self.e[i] - rhs.e[i])
-    }
+	type Output = Vec4;
+	fn sub(self, rhs: Self) -> Self::Output {
+		Vec4::construct(|i| self.e[i] - rhs.e[i])
+	}
 }
+
+// 単項マイナス演算子の実装
+impl ops::Neg for &Vec4 {
+	type Output = Vec4;
+	fn neg(self) -> Self::Output {
+		Vec4::construct(|i| -self.e[i])
+	}
+}
+impl ops::Neg for Vec4 {
+	type Output = Vec4;
+	fn neg(self) -> Self::Output {
+		-&self
+	}
+}
+
+
 impl ops::Sub for Vec4 {
     type Output = Vec4;
     fn sub(self, rhs: Self) -> Self::Output { &self - &rhs }
