@@ -13,7 +13,7 @@ impl Vec4Screen {
     /** このVec4のx, y要素をとった新たなPoint2を作る */
     pub fn to_point2(&self) -> Point2 {
 		if self.0.w().abs() < 1e-6 { return Point2::new((self.0.x()* 1e6) as i32, (self.0.y()* 1e6) as i32) ; }
-        Point2::new((self.0.x()) as i32, (self.0.y()) as i32)
+        Point2::new((self.0.x() / self.0.w()) as i32, (self.0.y() / self.0.w()) as i32)
     }
 }
 #[derive(Clone, Debug)]

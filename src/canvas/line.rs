@@ -8,7 +8,6 @@ pub struct Line {
 }
 
 fn round_div(n:i64, d:i64) -> i32 {
-    // d == 0 は注意！
     if d < 0 {
 		round_div(-n, -d)
 	} else if n >= 0 {
