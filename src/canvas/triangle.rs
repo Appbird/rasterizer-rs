@@ -23,7 +23,7 @@ impl Canvas {
 			Line::new(middle, top),
 			Line::new(bottom, top),
 		];
-		let inv_abc = 1./(area(&points[0], &points[1], &points[2]) as f64);
+		let inv_abc = 1./area(&points[0], &points[1], &points[2]);
 		for y in &range_y.and(&bound_y) {
 			let edge = if y < middle.y { &lines[0] } else { &lines[1] };
 			let i_edge1 = lines[2].across_y(y);
