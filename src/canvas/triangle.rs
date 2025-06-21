@@ -14,19 +14,21 @@ impl Canvas {
         // y基準でソート
         let mut indecies: [usize; 3] = [0, 1, 2];
         indecies.sort_by(|a, b| points[a.clone()].y.cmp(&points[b.clone()].y));
+		let bound_x = ClosedInterval::between(0,(self.width-1) as i32);
+		let bound_y = ClosedInterval::between(0,(self.height-1) as i32);
 		let range_y = ClosedInterval::range(points.map(|p| p.y.clone()));
-		let inv_abc = 1./(area(&points[0], &points[1], &points[2]) as f64);
 		let [bottom, middle, top] = indecies.map(|i| points[i.clone()]);
 		let lines = [
 			Line::new(bottom, middle),
 			Line::new(middle, top),
 			Line::new(bottom, top),
 		];
-		for y in &range_y {
+		let inv_abc = 1./(area(&points[0], &points[1], &points[2]) as f64);
+		for y in &range_y.and(&bound_y) {
 			let edge = if y < middle.y { &lines[0] } else { &lines[1] };
 			let i_edge1 = lines[2].across_y(y);
 			let i_edge2 = edge.across_y(y);
-			let segment = i_edge1.or(i_edge2);
+			let segment = (i_edge1.or(i_edge2)).and(&bound_x);
 			for x in &segment {
 				let p = Point2{x, y};
 				let w0 = area(&points[1], &points[2], &p) * inv_abc;

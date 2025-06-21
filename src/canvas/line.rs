@@ -7,14 +7,14 @@ pub struct Line {
 	p2: Point2
 }
 
-fn round_div(n:i32, d:i32) -> i32 {
+fn round_div(n:i64, d:i64) -> i32 {
     // d == 0 は注意！
     if d < 0 {
 		round_div(-n, -d)
 	} else if n >= 0 {
-        (n + d/2) / d
+        ((n + d/2) / d) as i32
     } else {
-        -((-n + d/2) / d)
+        -((-n + d/2) / d) as i32
     }
 }
 
@@ -22,9 +22,17 @@ impl Line {
 	pub fn new(p1:Point2, p2:Point2) -> Line { Line{ p1, p2 } }
 	pub fn delta(&self) -> Point2 { self.p2 - self.p1 }
 	pub fn across_y(&self, y:i32) -> ClosedInterval {
+		if self.p1.y == self.p2.y {
+			return 
+				if self.p1.y == 0 { ClosedInterval::between(self.p1.x, self.p2.x) }
+				else { ClosedInterval::empty() }
+		}
 		let delta = self.delta();
-		let x0 = self.p1.x + round_div(delta.x*(y - self.p1.y), delta.y);
-		let x1 = self.p1.x + round_div(delta.x*(y + 1 - self.p1.y), delta.y);
+		let delta_x = delta.x as i64;
+		let delta_y = delta.y as i64;
+		let y_y1 = (y - self.p1.y) as i64;
+		let x0 = self.p1.x + round_div(delta_x*y_y1, delta_y);
+		let x1 = self.p1.x + round_div(delta_x*(y_y1+1), delta_y);
 		ClosedInterval::between(x0, x1)
 	}
 }

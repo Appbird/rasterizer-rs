@@ -25,7 +25,8 @@ impl Point2 {
 		&self.x * rhs.x  + &self.y * rhs.y
 	}
 	pub fn cross(&self, rhs:&Self) -> i32 {
-		self.x * rhs.y - self.y * rhs.x
+		let r = (self.x as i64) * (rhs.y as i64) - (self.y as i64) * (rhs.x as i64);
+		r as i32
 	}
 	
 }

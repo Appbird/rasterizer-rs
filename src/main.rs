@@ -30,7 +30,7 @@ pub fn conversion_3d(camera:&mut Camera, canvas:&mut Canvas) -> Throwable<()> {
 	let k = 2.*PI / 5.;
     while canvas.update()? {
         let t = stopwatch.elapsed_as_sec();
-		camera.position = Vec4::newpoint(0., 0., f64::sin(k*t))*2.;
+		camera.position = Vec4::newpoint(f64::cos(k*t), f64::sin(k*t), 0.)*3. ;
 		/*
         let delta_time = (t - previous_instant) / 1000.;
         previous_instant = t;

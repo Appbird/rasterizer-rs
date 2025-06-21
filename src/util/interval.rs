@@ -17,6 +17,9 @@ impl ClosedInterval {
     pub fn between(a:i32, b:i32) -> ClosedInterval {
         ClosedInterval{ min: min(a, b), max: max(a, b) }   
     }
+	pub fn empty() -> ClosedInterval {
+        ClosedInterval{ min: 0, max: -1 }   
+    }
 	
 	pub fn range<I>(iter: I) -> ClosedInterval
 	where
@@ -34,7 +37,7 @@ impl ClosedInterval {
 			ClosedInterval { min: 0, max: -1 } // empty interval
 		}
 	}
-    pub fn and(self, i:ClosedInterval) -> ClosedInterval {
+    pub fn and(self, i:&ClosedInterval) -> ClosedInterval {
         ClosedInterval{
             min: max(self.min, i.min),
             max: min(self.max, i.max),
@@ -46,7 +49,7 @@ impl ClosedInterval {
             max: max(self.max, i.max),
         }
     }
-    pub fn empty(self) -> bool { self.min > self.max }
+    pub fn is_empty(self) -> bool { self.min > self.max }
 }
 
 impl Iterator for ClosedIntervalIter {
