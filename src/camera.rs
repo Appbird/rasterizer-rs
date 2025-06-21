@@ -76,6 +76,7 @@ impl Camera {
         canvas.draw_line(&p1, &p2, color);
     }
     pub fn draw_triangle(&mut self, canvas:&mut Canvas, points:&[Vec4Project; 3], colors:&[Color; 3]) {
+		snapshot!(points);
         let points: [Point2; 3] =
 			points.iter()
 				.map(|ref p| self.transform_into_screen(canvas.size(), &p))
@@ -86,6 +87,7 @@ impl Camera {
     }
     pub fn transform_into_screen(&self, size:Point2, p: &Vec4Project) -> Point2 {
         let scale = size.y as f64 / 2.;
-        Vec4Screen(Mat4x4::scale_xyz(&scale) * &p.0 + size.to_vec4() / 2.).to_point2()
+        let v = Mat4x4::scale_xyz(&scale) * &p.0 + size.to_vec4() / 2.;
+		Vec4Screen(&v / v.w()).to_point2()
     }
 }

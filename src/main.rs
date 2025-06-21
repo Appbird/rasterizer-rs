@@ -13,24 +13,24 @@ pub fn conversion_3d(camera:&mut Camera, canvas:&mut Canvas) -> Throwable<()> {
 	let red = Vec4::newvec(0.9, 0.2, 0.2);
     let world:Vec<Actor> = vec![
         Actor{
-            vertices: [Vec4::newpoint(0., 0., 0.), Vec4::newpoint(3., 1., 2.)/3., Vec4::newpoint(0., -3., 4.)/3.],
+            vertices: [Vec4::newpoint(0., 0., 0.), Vec4::newpoint(3./3., 1./3., 2./3.), Vec4::newpoint(0./3., -3./3., 4./3.)],
             position: Vec4::newpoint(0., 0., 0.),
             axis: Vec4::newvec(0., 0., 0.),
             theta: 0.0,
             color: [blue.clone(), green.clone(), red.clone()]
         },
         Actor{
-            vertices: [Vec4::newpoint(0., 4., -5.)/3., Vec4::newpoint(-3., -1., -2.)/3., Vec4::newpoint(0., 3., 4.)/3.],
+            vertices: [Vec4::newpoint(0., 4./3., -5./3.), Vec4::newpoint(-3./3., -1./3., -2./3.), Vec4::newpoint(0., 3., 4./3.)],
             position: Vec4::newpoint(0., 0., 0.),
             axis: Vec4::newvec(0., 0., 0.),
             theta: 0.0,
             color: [green.clone(), blue.clone(), blue.clone()]
         }
     ];
-	let k = 2.*PI / 5.;
+	//let k = 2.*PI / 5.;
     while canvas.update()? {
-        let t = stopwatch.elapsed_as_sec();
-		camera.position = Vec4::newpoint(f64::cos(k*t)*3., f64::sin(k*t)*3., 4.) ;
+        // let t = stopwatch.elapsed_as_sec();
+		camera.position = Vec4::newpoint(0., 0., 5.) ;
 		/*
         let delta_time = (t - previous_instant) / 1000.;
         previous_instant = t;

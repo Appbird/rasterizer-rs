@@ -21,10 +21,6 @@ fn main() -> Throwable<()> {
         Vec4::newvec(0.9, 0.2, 0.2),
     ];
     let points: [Vec4Project; 3] = points.iter().map(|e| Vec4Project(e.clone())).collect::<Vec<_>>().try_into().unwrap();
-    let red = Color::new(1., 0., 0., 1.);
-    for point in &points {
-        camera.draw_point(&mut canvas, &point, &red);
-    }
 	while canvas.update()? {
 		camera.draw_triangle(
 			&mut canvas,
