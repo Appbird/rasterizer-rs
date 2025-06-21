@@ -83,6 +83,21 @@ impl Vec4 {
 	pub fn cross2d(&self, rhs:&Self) -> f64 {
 		self.x()*rhs.y() - self.y()*rhs.x()
 	}
+	pub fn cross3d(&self, rhs:&Self) -> Vec4 {
+		let (x1, y1, z1) = (self.x(), self.y(), self.z());
+		let (x2, y2, z2) = (rhs.x(), rhs.y(), rhs.z());
+		Vec4::new(
+			y1*z2 - z1*y2,
+			z1*x2 - x1*z2,
+			x1*y2 - y1*x2,
+			0.
+		)
+	}
+	pub fn normalized3d(&self) -> Vec4 {
+		let (x, y, z) = (self.x(), self.y(), self.z());
+		let n = f64::sqrt(x*x + y*y + z*z);
+		Vec4::new(x/n, y/n, z/n, self.w())
+	}
     pub fn to_point2(self) -> Point2 {
 		Point2::new(self.x() as i32, self.y() as i32)
 	}

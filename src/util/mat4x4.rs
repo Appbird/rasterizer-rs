@@ -72,6 +72,14 @@ impl Mat4x4 {
             else { 0. }
         )
     }
+	pub fn transposed_basis(e1:&Vec4, e2:&Vec4, e3:&Vec4) -> Mat4x4 {
+		Mat4x4::from_array([
+			[e1.i(0), e1.i(1), e1.i(2), 0.],
+			[e2.i(0), e2.i(1), e2.i(2), 0.],
+			[e3.i(0), e3.i(1), e3.i(2), 0.],
+			[0., 0., 0., 1.],
+		])
+	}
 }
 
 impl Mat4x4 {
