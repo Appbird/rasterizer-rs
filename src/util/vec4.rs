@@ -16,7 +16,18 @@ impl Vec4Screen {
     }
 }
 #[derive(Clone, Debug)]
-pub struct Vec4Project(pub Vec4);
+pub struct Vec4Project(Vec4);
+impl Vec4Project {
+	pub fn new(v:Vec4) -> Self {
+		if v.w() < 1e-6 { Self(v*1e6) } else { Self(&v/v.w()) }
+	}
+	pub fn into_screen(&self, size:&Point2) -> Vec4Screen {
+        let scale = size.y as f64 / 2.;
+        let v = self.0.scaled_xy(&scale, &scale) + size.to_vec4() / 2.;
+		Vec4Screen(v)
+    }
+}
+
 #[derive(Clone, Debug)]
 pub struct Vec4View(pub Vec4);
 #[derive(Clone, Debug)]
@@ -39,6 +50,9 @@ impl Vec4 {
     }
 	pub fn newpoint(x: f64, y: f64, z: f64) -> Self {
         Vec4 { e: [x, y, z, 1.] }
+    }
+	pub fn newpixel(x: i32, y: i32) -> Self {
+        Vec4 { e: [x as f64 + 0.5, y as f64 + 0.5, 0., 1.] }
     }
     pub fn from_array(v: [f64; 4]) -> Self {
         Vec4 { e: v }
@@ -65,7 +79,17 @@ impl Vec4 {
     pub fn hadamard(&self, rhs:&Self) -> Self { Vec4::construct(|i| self.e[i] * rhs.e[i]) }
     /** 内積 */
     pub fn dot(&self, rhs:&Self) -> f64 { self.hadamard(rhs).fold() }
-    
+
+	pub fn cross2d(&self, rhs:&Self) -> f64 {
+		self.x()*rhs.y() - self.y()*rhs.x()
+	}
+    pub fn to_point2(self) -> Point2 {
+		Point2::new(self.x() as i32, self.y() as i32)
+	}
+
+	pub fn scaled_xy(&self, x: &f64, y: &f64) -> Self {
+        Vec4 { e: [self.x() * x, self.y() * y, self.z(), self.w()] }
+    }
 }
 
 impl ops::Add for &Vec4 {

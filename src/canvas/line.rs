@@ -17,6 +17,7 @@ fn round_div(n:i64, d:i64) -> i64 {
     }
 }
 
+#[allow(dead_code)]
 impl Line {
 	pub fn new(p1:Point2, p2:Point2) -> Line { Line{ p1, p2 } }
 	pub fn delta(&self) -> Point2 { self.p2 - self.p1 }
@@ -24,7 +25,7 @@ impl Line {
 		if self.p1.y == self.p2.y {
 			return 
 				if self.p1.y == 0 { ClosedInterval::between(self.p1.x, self.p2.x) }
-				else { ClosedInterval::empty() }
+				else { ClosedInterval::<i32>::empty() }
 		}
 		let delta = self.delta();
 		let delta_x = delta.x as i64;

@@ -1,5 +1,5 @@
 use crate::{
-    actor::Actor, canvas::Canvas, snapshot, util::{Color, Mat4x4, Point2, Vec4, Vec4Project, Vec4Screen}
+    actor::Actor, canvas::Canvas, snapshot, util::{Mat4x4, Vec4, Vec4Project}
 };
 use std::f64::consts::PI;
 
@@ -38,16 +38,15 @@ impl Camera {
         let perspective = self.perspective_conversion();
         let view = self.view_conversion();
         let pv = perspective*view;
-
         for actor in actors {
             let model = actor.model_conversion();
             let pvm = &pv * &model;
-            let projected:[Vec4Project; 3] = [
-                Vec4Project(&pvm * &actor.vertices[0]),
-                Vec4Project(&pvm * &actor.vertices[1]),
-                Vec4Project(&pvm * &actor.vertices[2]),
+            let projected = [
+                Vec4Project::new(&pvm * &actor.vertices[0]).into_screen(&canvas.size()),
+                Vec4Project::new(&pvm * &actor.vertices[1]).into_screen(&canvas.size()),
+                Vec4Project::new(&pvm * &actor.vertices[2]).into_screen(&canvas.size()),
             ];
-            self.draw_triangle(canvas, &projected, &actor.color);
+            canvas.draw_triangle(projected, &actor.color);
         }
     }
     pub fn perspective_conversion(&self) -> Mat4x4 {
@@ -58,36 +57,11 @@ impl Camera {
         Mat4x4::from_array([
             [ n / w,    0.,     0.,     0.  ],
             [ 0.,       n / h,  0.,     0.  ],
-            [ 0.,       0.,     (f+n)/(f-n), -2.*(f*n)/(f - n)],
+            [ 0.,       0.,     (f+n)/(f-n), -2.*(f*n)/(f-n)],
             [ 0.,       0.,     1.,     0.  ],
         ])
     }
 	pub fn view_conversion(&self) -> Mat4x4 {
         Mat4x4::translate(&-(&self.position))
-    }
-	
-    pub fn draw_point(&mut self, canvas:&mut Canvas, p1:&Vec4Project, color:&Color) {
-        let p1 = self.transform_into_screen(canvas.size(), &p1);
-        canvas.draw_point(&p1, color);
-    }
-    pub fn draw_line(&mut self, canvas:&mut Canvas, p1:&Vec4Project, p2:&Vec4Project, color:&Color) {
-        let p1 = self.transform_into_screen(canvas.size(), &p1);
-        let p2 = self.transform_into_screen(canvas.size(), &p2);
-        canvas.draw_line(&p1, &p2, color);
-    }
-    pub fn draw_triangle(&mut self, canvas:&mut Canvas, points:&[Vec4Project; 3], colors:&[Color; 3]) {
-		snapshot!(points);
-        let points: [Point2; 3] =
-			points.iter()
-				.map(|ref p| self.transform_into_screen(canvas.size(), &p))
-				.collect::<Vec<_>>()
-				.try_into()
-				.unwrap();
-        canvas.draw_triangle(&points, colors);
-    }
-    pub fn transform_into_screen(&self, size:Point2, p: &Vec4Project) -> Point2 {
-        let scale = size.y as f64 / 2.;
-        let v = Mat4x4::scale_xyz(&scale) * &p.0 + size.to_vec4() / 2.;
-		Vec4Screen(&v / v.w()).to_point2()
     }
 }
