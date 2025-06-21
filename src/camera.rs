@@ -16,14 +16,14 @@ pub struct Camera {
 impl Camera {
     pub fn new(aspect: f64) -> Camera {
         let near = 0.1;
-        let width = 2. * near * f64::tan(PI /4.);
+        let width = 2. * near * f64::tan(PI /6.);
         Camera{
             near: 0.1,
             far: 100.,
             width,
             height: width * aspect,
-			position: Vec4::newpoint(0., 0., 6.),
-			look: Vec4::newvec(0., 0., -1.),
+			position: Vec4::newpoint(0., 0., -8.),
+			look: Vec4::newvec(0., 0., 1.),
 			up: Vec4::newvec(0., 1., 0.),
         }
     }
@@ -57,8 +57,8 @@ impl Camera {
     }
 	pub fn view_conversion(&self) -> Mat4x4 {
 		let ez = &self.look;
-		let ex = ez.cross3d(&self.up).normalized3d();
-		let ey = ez.cross3d(&ex).normalized3d();
+		let ex = &self.up.cross3d(&ez).normalized3d();
+		let ey = ez.cross3d(&ex);
         Mat4x4::transposed_basis(&ex, &ey, &ez) * Mat4x4::translate(&-(&self.position))
     }
 }
