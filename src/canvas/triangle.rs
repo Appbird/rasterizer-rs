@@ -16,7 +16,6 @@ impl Canvas {
         indecies.sort_by(|a, b| points[a.clone()].y.cmp(&points[b.clone()].y));
 		let bound_x = ClosedInterval::between(0,(self.width-1) as i32);
 		let bound_y = ClosedInterval::between(0,(self.height-1) as i32);
-		snapshot!(points);
 		let y_segment = ClosedInterval::range(points.map(|p| p.y.clone()));
 		let [bottom, middle, top] = indecies.map(|i| points[i.clone()]);
 		let lines = [

@@ -82,7 +82,6 @@ impl Camera {
 				.collect::<Vec<_>>()
 				.try_into()
 				.unwrap();
-		snapshot!(points);
         canvas.draw_triangle(&points, colors);
     }
     pub fn transform_into_screen(&self, size:Point2, p: &Vec4Project) -> Point2 {

@@ -21,7 +21,7 @@ pub fn conversion_3d(camera:&mut Camera, canvas:&mut Canvas) -> Throwable<()> {
         },
         Actor{
             vertices: [Vec4::newpoint(0., 4., -5.)/3., Vec4::newpoint(-3., -1., -2.)/3., Vec4::newpoint(0., 3., 4.)/3.],
-            position: Vec4::newvec(0., 0., 0.),
+            position: Vec4::newpoint(0., 0., 0.),
             axis: Vec4::newvec(0., 0., 0.),
             theta: 0.0,
             color: [green.clone(), blue.clone(), blue.clone()]
@@ -30,7 +30,7 @@ pub fn conversion_3d(camera:&mut Camera, canvas:&mut Canvas) -> Throwable<()> {
 	let k = 2.*PI / 5.;
     while canvas.update()? {
         let t = stopwatch.elapsed_as_sec();
-		camera.position = Vec4::newpoint(f64::cos(k*t)*3., f64::sin(k*t)*3., 2.) ;
+		camera.position = Vec4::newpoint(f64::cos(k*t)*3., f64::sin(k*t)*3., 4.) ;
 		/*
         let delta_time = (t - previous_instant) / 1000.;
         previous_instant = t;
