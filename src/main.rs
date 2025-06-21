@@ -3,7 +3,6 @@ use std::f64::consts::PI;
 use rasterizer_rs::actor::Actor;
 use rasterizer_rs::camera::Camera;
 use rasterizer_rs::canvas::Canvas;
-use rasterizer_rs::snapshot;
 use rasterizer_rs::util::{Stopwatch, Throwable, Vec4};
 
 pub fn conversion_3d(camera:&mut Camera, canvas:&mut Canvas) -> Throwable<()> {

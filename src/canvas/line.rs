@@ -1,6 +1,6 @@
 use super::base::Canvas;
 use super::bresenham::BresenhamLine;
-use crate::{snapshot, util::{ClosedInterval, Color, Point2}};
+use crate::util::{ClosedInterval, Color, Point2};
 
 pub struct Line {
 	p1: Point2,

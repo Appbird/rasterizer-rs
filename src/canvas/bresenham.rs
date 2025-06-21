@@ -1,6 +1,6 @@
 
 
-use crate::{snapshot, util::Point2};
+use crate::util::Point2;
 
 /*
 fn ceil_div(a:i32, b:i32) -> i32 {
