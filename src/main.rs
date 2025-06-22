@@ -35,8 +35,11 @@ pub fn conversion_3d(camera:&mut Camera, canvas:&mut Canvas) -> Throwable<()> {
 	        let _fps = 1.0 / delta_time;
 		*/
         let t = stopwatch.elapsed_as_sec();
-		camera.position = Vec4::newpoint(6.*f64::cos(k*t), 0., 6.*f64::sin(k*t)) ;
-		camera.look = Vec4::newvec(-f64::cos(k*t), 0., -f64::sin(k*t)) ;
+		camera.position = Vec4::newpoint(0., 0., 8. + 2.*f64::cos(k*t)) ;
+		camera.look = Vec4::newpoint(0., 0., -1.) ;
+		camera.up = Vec4::newvec(f64::cos(k*t),  f64::sin(k*t), 0.) ;
+		//camera.position = Vec4::newpoint(6.*f64::cos(k*t), 0., 6.*f64::sin(k*t)) ;
+		//camera.look = Vec4::newvec(-f64::cos(k*t), 0., -f64::sin(k*t)) ;
 		
         camera.snapshot(canvas, &world);
     }

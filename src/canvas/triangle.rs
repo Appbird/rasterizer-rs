@@ -1,4 +1,4 @@
-use crate::util::{ClosedInterval, Color, Vec4, Vec4Screen};
+use crate::{canvas::line::Line, util::{ClosedInterval, Color, Vec4, Vec4Screen}};
 use super::Canvas;
 
 fn area(p0:&Vec4, p1:&Vec4, p2:&Vec4) -> f64 {
@@ -14,23 +14,39 @@ impl Canvas {
         color: &[Color; 3]
     ) {
         // y基準でソート
-		let mut points = points.map(|p| p.0);
-		points.sort_by(|a, b| a.y().partial_cmp(&b.y()).unwrap_or(std::cmp::Ordering::Equal));
+		let points = points.map(|p| p.0);
 		let bound_x = ClosedInterval::between(0,(self.width-1) as i32);
 		let bound_y = ClosedInterval::between(0,(self.height-1) as i32);
 		let bound_z = ClosedInterval::between(-1.,1.);
 		
-		let x_segment = ClosedInterval::range(points.iter().map(|p| p.x() as i32));
 		let y_segment = ClosedInterval::range(points.iter().map(|p| p.y() as i32));
 		let z_segment = ClosedInterval::range(points.iter().map(|p| p.z()));
 		if z_segment.and(&bound_z).is_empty() { return; }
 		
+		// 辺を求める
+		let mut points_idx:[usize; 3] = [0, 1, 2];
+		points_idx.sort_by(|a, b| points[a.clone()].y().partial_cmp(&points[b.clone()].y()).unwrap_or(std::cmp::Ordering::Equal));
+		let [bottom, middle, top] = [
+			points[points_idx[0]].to_point2(),
+			points[points_idx[1]].to_point2(),
+			points[points_idx[2]].to_point2()
+		];
+		let lines = [
+			Line::new(bottom, middle),
+			Line::new(middle, top),
+			Line::new(bottom, top),
+		];
+		// Barycentric座標
 		let bound_w = ClosedInterval::between(0.,1.);
 		let area_abc = area(&points[0], &points[1], &points[2]);
 		if area_abc.abs() < 1e-6 { return; }
 		let inv_abc = 1./area_abc; 
 
 		for y in &y_segment.and(&bound_y) {
+			let edge = if y < middle.y { &lines[0] } else { &lines[1] };
+			let i_edge1 = lines[2].across_y(y);
+			let i_edge2 = edge.across_y(y);
+			let x_segment = i_edge1.or(i_edge2);
 			for x in &x_segment.and(&bound_x) {
 				let p = Vec4::newpixel(x, y);
 				let w0 = area(&points[1], &points[2], &p) * inv_abc;

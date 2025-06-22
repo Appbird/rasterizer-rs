@@ -98,7 +98,7 @@ impl Vec4 {
 		let n = f64::sqrt(x*x + y*y + z*z);
 		Vec4::new(x/n, y/n, z/n, self.w())
 	}
-    pub fn to_point2(self) -> Point2 {
+    pub fn to_point2(&self) -> Point2 {
 		Point2::new(self.x() as i32, self.y() as i32)
 	}
 
