@@ -1,5 +1,5 @@
 use crate::{
-    actor::Actor, canvas::Canvas, util::{Mat4x4, Vec4, Vec4Project}
+    actor::Actor, canvas::Canvas, snapshot, util::{Mat4x4, Vec4, Vec4Project}
 };
 use std::f64::consts::PI;
 
@@ -22,8 +22,8 @@ impl Camera {
             far: 100.,
             width,
             height: width * aspect,
-			position: Vec4::newpoint(0., 0., -8.),
-			look: Vec4::newvec(0., 0., 1.),
+			position: Vec4::newpoint(0., 0., 0.),
+			look: Vec4::newvec(0., 0., -1.),
 			up: Vec4::newvec(0., 1., 0.),
         }
     }
@@ -51,12 +51,12 @@ impl Camera {
         Mat4x4::from_array([
             [ n / w,    0.,     0.,     0.  ],
             [ 0.,       n / h,  0.,     0.  ],
-            [ 0.,       0.,     (f+n)/(f-n), -2.*(f*n)/(f-n)],
-            [ 0.,       0.,     1.,     0.  ],
+            [ 0.,       0.,     -(f+n)/(f-n), -2.*(f*n)/(f-n)],
+            [ 0.,       0.,     -1.,     0.  ],
         ])
     }
 	pub fn view_conversion(&self) -> Mat4x4 {
-		let ez = &self.look;
+		let ez = -&self.look;
 		let ex = &self.up.cross3d(&ez).normalized3d();
 		let ey = ez.cross3d(&ex);
         Mat4x4::transposed_basis(&ex, &ey, &ez) * Mat4x4::translate(&-(&self.position))

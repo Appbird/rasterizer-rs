@@ -23,7 +23,7 @@ impl Vec4Project {
 	}
 	pub fn into_screen(&self, size:&Point2) -> Vec4Screen {
         let scale = size.y as f64 / 2.;
-        let v = self.0.scaled_xy(&scale, &scale) + size.to_vec4() / 2.;
+        let v = self.0.scaled_xy(&scale, &(-scale)) + size.to_vec4() / 2.;
 		Vec4Screen(v)
     }
 }

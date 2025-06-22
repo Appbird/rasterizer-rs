@@ -37,7 +37,6 @@ impl Canvas {
 			Line::new(bottom, top),
 		];
 		// Barycentric座標
-		let bound_w = ClosedInterval::between(0.,1.);
 		let area_abc = area(&points[0], &points[1], &points[2]);
 		if area_abc.abs() < 1e-6 { return; }
 		let inv_abc = 1./area_abc; 
@@ -52,7 +51,6 @@ impl Canvas {
 				let w0 = area(&points[1], &points[2], &p) * inv_abc;
 				let w1 = area(&points[2], &points[0], &p) * inv_abc;
 				let w2 = area(&points[0], &points[1], &p) * inv_abc;
-				if !bound_w.includes(w0) || !bound_w.includes(w1) || !bound_w.includes(w2) { continue; }
 				self.draw_pixel(&p.to_point2(),&(w0*&color[0] + w1 * &color[1] + w2 * &color[2]));
 			}
 		}
