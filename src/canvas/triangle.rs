@@ -1,4 +1,4 @@
-use crate::{canvas::line::Line, util::{ClosedInterval, Color, Vec4, Vec4Screen}};
+use crate::{canvas::line::Line, snapshot, util::{ClosedInterval, Color, Vec4, Vec4Screen}};
 use super::Canvas;
 
 fn area(p0:&Vec4, p1:&Vec4, p2:&Vec4) -> f64 {
@@ -48,10 +48,18 @@ impl Canvas {
 			let x_segment = i_edge1.or(i_edge2);
 			for x in &x_segment.and(&bound_x) {
 				let p = Vec4::newpixel(x, y);
-				let w0 = area(&points[1], &points[2], &p) * inv_abc;
-				let w1 = area(&points[2], &points[0], &p) * inv_abc;
-				let w2 = area(&points[0], &points[1], &p) * inv_abc;
-				self.draw_pixel(&p.to_point2(),&(w0*&color[0] + w1 * &color[1] + w2 * &color[2]));
+				let w = [
+					area(&points[1], &points[2], &p) * inv_abc,
+					area(&points[2], &points[0], &p) * inv_abc,
+					area(&points[0], &points[1], &p) * inv_abc,
+				];
+				let z = [
+					points[0].z(), points[1].z(), points[2].z(), 
+				];
+				let p = p.to_point2();
+				let depth = w[0]*z[0] + w[1]*z[1] + w[2]*z[2];
+				//let color = &color[0]*w[0] + &color[1]*w[1] + &color[2]*w[2];
+				self.draw_depth(&p, &depth);
 			}
 		}
         /*

@@ -13,19 +13,21 @@ pub fn conversion_3d(camera:&mut Camera, canvas:&mut Canvas) -> Throwable<()> {
 	let red = Vec4::newvec(0.9, 0.2, 0.2);
     let world:Vec<Actor> = vec![
         Actor{
-            vertices: [Vec4::newpoint(0., 0., 0.), Vec4::newpoint(1., 1., 1.), Vec4::newpoint(0., -3., 4.)],
+            vertices: [Vec4::newpoint(1., 2., 3.), Vec4::newpoint(1., -2., 0.), Vec4::newpoint(-1., -1., -3.)],
             position: Vec4::newpoint(0., 0., 0.),
             axis: Vec4::newvec(0., 0., 0.),
             theta: 0.0,
-            color: [red.clone(), red.clone(), red.clone()]
+            color: [red.clone(), blue.clone(), red.clone()]
         },
         Actor{
-            vertices: [Vec4::newpoint(0., 0., 0.), Vec4::newpoint(-3., -1., -2.), Vec4::newpoint(0., 3., -4.)],
+            vertices: [Vec4::newpoint(1., 2., -3.), Vec4::newpoint(1., -2., 0.), Vec4::newpoint(-1., -1., 3.)],
             position: Vec4::newpoint(0., 0., 0.),
             axis: Vec4::newvec(0., 0., 0.),
             theta: 0.0,
-            color: [blue.clone(), blue.clone(), blue.clone()]
-        }
+            color: [green.clone(), blue.clone(), green.clone()]
+        },
+		
+		
     ];
 	let k = 2.*PI / 5.;
     while canvas.update()? {
@@ -35,15 +37,9 @@ pub fn conversion_3d(camera:&mut Camera, canvas:&mut Canvas) -> Throwable<()> {
 	        let _fps = 1.0 / delta_time;
 		*/
         let t = stopwatch.elapsed_as_sec();
-		camera.position = Vec4::newpoint(0., 0., 8.) ;
-		camera.look = Vec4::newpoint(0., 0., -1.) ;
-		camera.up = Vec4::newvec(0., 1., 0.) ;
-		
-		//camera.position = Vec4::newpoint(0., 0., 8. + 2.*f64::cos(k*t)) ;
-		//camera.look = Vec4::newpoint(0., 0., -1.) ;
-		//camera.up = Vec4::newvec(f64::cos(k*t),  f64::sin(k*t), 0.) ;
-		//camera.position = Vec4::newpoint(6.*f64::cos(k*t), 0., 6.*f64::sin(k*t)) ;
-		//camera.look = Vec4::newvec(-f64::cos(k*t), 0., -f64::sin(k*t)) ;
+		camera.position = Vec4::newpoint(4.*f64::cos(k*t), 4.*f64::sin(k*t), 0.) ;
+		camera.look = Vec4::newvec(-f64::cos(k*t), -f64::sin(k*t), 0.) ;
+		camera.up = Vec4::newvec(0., 0., 1.) ;
 		
         camera.snapshot(canvas, &world);
     }

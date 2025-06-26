@@ -1,4 +1,5 @@
 use minifb::{Window, WindowOptions, Key};
+use crate::snapshot;
 use crate::util::{in_range, Point2};
 use crate::util::Color;
 
@@ -6,7 +7,8 @@ pub struct Canvas {
     window:Window,
     pub width:usize,
     pub height:usize,
-    buffer:Vec<u32>
+    color_buffer:Vec<u32>,
+	depth_buffer:Vec<f64>
 }
 
 fn encode_color(color: &Color) -> u32 {
@@ -26,8 +28,9 @@ fn encode_color(color: &Color) -> u32 {
 impl Canvas {
     pub fn new(width:usize, height:usize) -> minifb::Result<Canvas>{
         let window = Window::new("rasterizer-rs", width, height, WindowOptions::default())?;
-        let buffer = vec![0; width * height];
-        let mut canvas = Canvas{window, width, height, buffer};
+        let color_buffer = vec![0; width * height];
+		let depth_buffer = vec![1.; width * height];
+        let mut canvas = Canvas{window, width, height, color_buffer, depth_buffer};
         canvas.window.set_target_fps(60);
         Ok(canvas)
     }
@@ -36,7 +39,36 @@ impl Canvas {
         let h = self.height as i32;
         if in_range(0, p.x, w) && in_range(0, p.y, h) {
             let pixel_pos = p.y * w + p.x;
-            self.buffer[pixel_pos as usize] = encode_color(color);
+            self.color_buffer[pixel_pos as usize] = encode_color(color);
+        }
+    }
+	pub fn draw_pixel_with_depth(&mut self, p: &Point2, depth:&f64, color: &Color) {
+        let w = self.width as i32;
+        let h = self.height as i32;
+		let pixel_pos = (p.y * w + p.x) as usize;
+        if in_range(0, p.x, w)
+		&& in_range(0, p.y, h)
+		&& &self.depth_buffer[pixel_pos] > depth{
+			self.color_buffer[pixel_pos] = encode_color(&color);
+			self.depth_buffer[pixel_pos] = *depth;
+        }
+    }
+	pub fn draw_depth(&mut self, p: &Point2, depth:&f64) {
+        let w = self.width as i32;
+        let h = self.height as i32;
+		let pixel_pos = (p.y * w + p.x) as usize;
+        if in_range(0, p.x, w)
+		&& in_range(0, p.y, h)
+		&& &self.depth_buffer[pixel_pos] > depth{
+			let x = (depth + 1.)/2.;
+			let x2 = x*x;
+			let x4 = x2*x2;
+			let x8 = x4*x4;
+			let x16 = x8*x8;
+			let x32 = x16*x16;
+			let color_depth = 1. - x32;
+			self.color_buffer[pixel_pos] = encode_color(&Color::new(color_depth, color_depth, color_depth, 0.0));
+			self.depth_buffer[pixel_pos] = *depth;
         }
     }
     pub fn draw_point(&mut self, center:&Point2, color: &Color) {
@@ -50,9 +82,10 @@ impl Canvas {
         }
     }
     pub fn update(&mut self) -> minifb::Result<bool> {
-        self.window.update_with_buffer(&self.buffer, self.width, self.height)?;
+        self.window.update_with_buffer(&self.color_buffer, self.width, self.height)?;
         for i in 0 .. self.width * self.height {
-            self.buffer[i] = encode_color(&Color::newvec(0., 0., 0.));
+            self.color_buffer[i] = encode_color(&Color::newvec(0., 0., 0.));
+			self.depth_buffer[i] = 1.;
         }
         Ok(self.window.is_open() && !self.window.is_key_down(Key::Escape))
     }
