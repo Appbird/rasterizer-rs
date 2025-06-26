@@ -7,6 +7,7 @@ pub struct Canvas {
     window:Window,
     pub width:usize,
     pub height:usize,
+    pub culling: bool,
     color_buffer:Vec<u32>,
 	depth_buffer:Vec<f64>
 }
@@ -30,7 +31,8 @@ impl Canvas {
         let window = Window::new("rasterizer-rs", width, height, WindowOptions::default())?;
         let color_buffer = vec![0; width * height];
 		let depth_buffer = vec![1.; width * height];
-        let mut canvas = Canvas{window, width, height, color_buffer, depth_buffer};
+        let culling = false;
+        let mut canvas = Canvas{window, width, height, color_buffer, depth_buffer, culling};
         canvas.window.set_target_fps(60);
         Ok(canvas)
     }

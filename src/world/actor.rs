@@ -1,11 +1,16 @@
 use crate::util::{Mat4x4, Vec4};
 
 pub struct Actor {
-    pub vertices:[Vec4; 3],
+    pub polygons:Vec<Polygon>,
     pub position:Vec4,
     pub axis:Vec4,
-    pub theta:f64,
-    pub color: [Vec4; 3]
+    pub theta:f64
+}
+
+#[derive(Debug, Clone)]
+pub struct Polygon {
+    pub vertices: [Vec4; 3],
+    pub color: [Vec4; 3],
 }
 
 impl Actor {

@@ -38,7 +38,9 @@ impl Canvas {
 		];
 		// Barycentric座標
 		let area_abc = area(&points[0], &points[1], &points[2]);
-		if area_abc.abs() < 1e-6 { return; }
+		// culling
+        if self.culling && area_abc < 0. { return; }
+        if area_abc.abs() < 1e-6 { return; }
 		let inv_abc = 1./area_abc; 
 
 		for y in &y_segment.and(&bound_y) {
@@ -58,8 +60,8 @@ impl Canvas {
 				];
 				let p = p.to_point2();
 				let depth = w[0]*z[0] + w[1]*z[1] + w[2]*z[2];
-				//let color = &color[0]*w[0] + &color[1]*w[1] + &color[2]*w[2];
-				self.draw_depth(&p, &depth);
+				let color = &color[0]*w[0] + &color[1]*w[1] + &color[2]*w[2];
+				self.draw_pixel_with_depth(&p, &depth, &color);
 			}
 		}
         /*

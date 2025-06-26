@@ -1,6 +1,7 @@
 use crate::{
-    actor::Actor, canvas::Canvas, snapshot, util::{Mat4x4, Vec4, Vec4Project}
+    canvas::Canvas, util::{Mat4x4, Vec4, Vec4Project}
 };
+use crate::world::actor::Actor;
 use std::f64::consts::PI;
 
 pub struct Camera {
@@ -34,12 +35,14 @@ impl Camera {
         for actor in actors {
             let model = actor.model_conversion();
             let pvm = &pv * &model;
-            let projected = [
-                Vec4Project::new(&pvm * &actor.vertices[0]).into_screen(&canvas.size()),
-                Vec4Project::new(&pvm * &actor.vertices[1]).into_screen(&canvas.size()),
-                Vec4Project::new(&pvm * &actor.vertices[2]).into_screen(&canvas.size()),
-            ];
-            canvas.draw_triangle(projected, &actor.color);
+            for polygon in &actor.polygons {
+                let projected = [
+                    Vec4Project::new(&pvm * &polygon.vertices[0]).into_screen(&canvas.size()),
+                    Vec4Project::new(&pvm * &polygon.vertices[1]).into_screen(&canvas.size()),
+                    Vec4Project::new(&pvm * &polygon.vertices[2]).into_screen(&canvas.size()),
+                ];
+                canvas.draw_triangle(projected, &polygon.color);
+            }
         }
     }
     pub fn perspective_conversion(&self) -> Mat4x4 {
