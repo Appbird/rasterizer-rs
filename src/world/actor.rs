@@ -4,6 +4,7 @@ pub struct Actor {
     pub polygons:Vec<Polygon>,
     pub position:Vec4,
     pub axis:Vec4,
+    pub scale: Vec4,
     pub theta:f64
 }
 
