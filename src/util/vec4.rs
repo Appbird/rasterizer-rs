@@ -45,6 +45,9 @@ impl Vec4 {
     pub fn new(x: f64, y: f64, z: f64, w:f64) -> Self {
         Vec4 { e: [x, y, z, w] }
     }
+    pub fn zero() -> Self {
+        Vec4 { e: [0., 0., 0., 0.] }
+    }
     pub fn newvec(x: f64, y: f64, z: f64) -> Self {
         Vec4 { e: [x, y, z, 0.] }
     }
@@ -98,6 +101,10 @@ impl Vec4 {
 		let n = f64::sqrt(x*x + y*y + z*z);
 		Vec4::new(x/n, y/n, z/n, self.w())
 	}
+    pub fn norm3d(&self) -> f64 {
+        let (x, y, z) = (self.x(), self.y(), self.z());
+        return f64::sqrt(x*x + y*y + z*z);
+    }
     pub fn to_point2(&self) -> Point2 {
 		Point2::new(self.x() as i32, self.y() as i32)
 	}
@@ -113,6 +120,17 @@ impl ops::Add for &Vec4 {
         Vec4::construct(|i| self.e[i] + rhs.e[i])
     }
 }
+impl ops::AddAssign<&Vec4> for Vec4 {
+    fn add_assign(&mut self, rhs: &Self) {
+        for i in 0..4 { self.e[i] += rhs.e[i]; }
+    }
+}
+impl ops::AddAssign<Vec4> for Vec4 {
+    fn add_assign(&mut self, rhs: Self) {
+        for i in 0..4 { self.e[i] += rhs.e[i]; }
+    }
+}
+
 impl ops::Add for Vec4 {
     type Output = Vec4;
     fn add(self, rhs: Self) -> Self::Output { &self + &rhs }

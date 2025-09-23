@@ -1,11 +1,11 @@
 use std::f64::consts::PI;
 
-use rasterizer_rs::world::actor::{Actor, Polygon};
+use rasterizer_rs::world::actor::Actor;
 use rasterizer_rs::world::camera::Camera;
 use rasterizer_rs::canvas::Canvas;
 use rasterizer_rs::util::{Stopwatch, Throwable, Vec4};
 use rasterizer_rs::world::sample_model::tetrahedron;
-use rand::seq::{IndexedRandom, SliceRandom};
+use rand::seq::IndexedRandom;
 
 
 pub fn conversion_3d(camera:&mut Camera, canvas:&mut Canvas) -> Throwable<()> {
@@ -22,17 +22,29 @@ pub fn conversion_3d(camera:&mut Camera, canvas:&mut Canvas) -> Throwable<()> {
         tetrahedron([blue.clone(), blue.clone(), green.clone()])
     ];
     
-    let rng = rand::rng();
-    let world = vec![];
+    let mut rng = rand::rng();
+    let mut world = vec![];
     while canvas.update()? {
         let t = stopwatch.elapsed_as_sec();
 		camera.position = Vec4::newpoint(3.*f64::cos(k*t), 3.*f64::sin(k*t), 0.) ;
 		camera.look = Vec4::newvec(-f64::cos(k*t), -f64::sin(k*t), 0.) ;
 		camera.up = Vec4::newvec(0., 0., 1.) ;
         let tetra = tetras.choose(&mut rng).unwrap().clone();
-        world.clear();
-        world.push(Actor{tetra});
+        world.push(Actor{
+            polygons: tetra,
+            
+            position: Vec4::newpoint(0., 0., 0.),
+            velocity: Vec4::zero(),
+            acc: Vec4::zero(),
+            
+            theta: Vec4::newvec(2.*PI, 0., 0.),
+            omega: Vec4::zero(),
+            angacc: Vec4::zero(),
+            
+            scale: Vec4::newvec(1., 1., 1.),
+        });
         // TODO: Actorに速度・加速度をつける！
+        // deltatime, Actorへの機能追加
         camera.snapshot(canvas, &world);
     }
     Ok(())
