@@ -1,5 +1,5 @@
 use crate::{
-    canvas::Canvas, util::{Mat4x4, Vec4, Vec4Project}
+    canvas::Canvas, shader::vertex, util::{Mat4x4, Vec4, Vec4Project}
 };
 use crate::world::actor::Actor;
 use std::f64::consts::PI;
@@ -37,9 +37,9 @@ impl Camera {
             let pvm = &pv * &model;
             for polygon in &actor.polygons {
                 let projected = [
-                    Vec4Project::new(&pvm * &polygon.vertices[0]).into_screen(&canvas.size()),
-                    Vec4Project::new(&pvm * &polygon.vertices[1]).into_screen(&canvas.size()),
-                    Vec4Project::new(&pvm * &polygon.vertices[2]).into_screen(&canvas.size()),
+                    vertex::default_vshader(&pvm, &polygon.vertices[0]).into_screen(&canvas.size()),
+                    vertex::default_vshader(&pvm, &polygon.vertices[1]).into_screen(&canvas.size()),
+                    vertex::default_vshader(&pvm, &polygon.vertices[2]).into_screen(&canvas.size()),
                 ];
                 canvas.draw_triangle(projected, &polygon.color);
             }

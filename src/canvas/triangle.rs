@@ -1,4 +1,4 @@
-use crate::{canvas::line::Line, util::{ClosedInterval, Color, Vec4, Vec4Screen}};
+use crate::{canvas::line::Line, shader::fragment, util::{ClosedInterval, Color, Vec4, Vec4Screen}};
 use super::Canvas;
 
 fn area(p0:&Vec4, p1:&Vec4, p2:&Vec4) -> f64 {
@@ -53,7 +53,7 @@ impl Canvas {
 				let p = p.to_point2();
 				let depth = w[0]*z[0] + w[1]*z[1] + w[2]*z[2];
 				let color = &color[0]*w[0] + &color[1]*w[1] + &color[2]*w[2];
-				
+				let color = fragment::default_fshader(p, color);
                 self.draw_pixel_with_depth(&p, &depth, &color);
 			}
 		}
