@@ -4,6 +4,7 @@ mod interval;
 mod mat4x4;
 mod debug;
 mod stopwatch;
+mod random;
 
 pub use point2::*;
 pub use vec4::*;

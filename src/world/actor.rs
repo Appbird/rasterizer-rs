@@ -1,5 +1,8 @@
+use std::{f64::consts::PI, time::Instant};
+
 use crate::util::{Mat4x4, Vec4};
 
+#[derive(Clone)]
 pub struct Actor {
     pub polygons:Vec<Polygon>,
     pub position:Vec4,
@@ -8,7 +11,9 @@ pub struct Actor {
     pub theta:Vec4,
     pub omega:Vec4,
     pub angacc:Vec4,
-    pub scale: Vec4
+    pub scale: Vec4,
+    created_at: Instant,
+    terminated:bool,
 }
 
 #[derive(Debug, Clone)]
@@ -18,15 +23,39 @@ pub struct Polygon {
 }
 
 impl Actor {
+    pub fn new(
+        polygon:Vec<Polygon>
+    ) -> Actor {
+        let zerovec =  Vec4::newvec(0., 0., 0.);
+        Actor {
+            polygons: polygon,
+            position: Vec4::newpoint(0., 0., 0.),
+            velocity: zerovec.clone(),
+            acc: zerovec.clone(),
+            theta: Vec4::newvec(2.*PI, 0., 0.),
+            omega: zerovec.clone(),
+            angacc: zerovec.clone(),
+            scale: Vec4::newvec(1., 1., 1.),
+            created_at: Instant::now(),
+            terminated: false
+        }
+    }
     pub fn update(&mut self, dt:f64) -> () {
         self.position += &self.velocity * dt;
         self.velocity += &self.acc * dt;
         self.theta += &self.omega * dt;
         self.omega += &self.angacc * dt;
+        if self.created_at.elapsed().as_secs_f64() > 3.0 { self.terminate(); }
     }
     pub fn model_conversion(&self) -> Mat4x4 {
         let t = self.theta.norm3d();
         Mat4x4::translate(&self.position)
         * Mat4x4::rotation(&(&self.theta / t), t)
+    }
+    pub fn terminate(&mut self) {
+        self.terminated = true;
+    }
+    pub fn is_terminated(&self) -> bool {
+        self.terminated
     }
 }

@@ -1,4 +1,4 @@
-use crate::{canvas::line::Line, snapshot, util::{ClosedInterval, Color, Vec4, Vec4Screen}};
+use crate::{canvas::line::Line, util::{ClosedInterval, Color, Vec4, Vec4Screen}};
 use super::Canvas;
 
 fn area(p0:&Vec4, p1:&Vec4, p2:&Vec4) -> f64 {
