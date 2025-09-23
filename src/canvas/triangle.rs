@@ -18,24 +18,11 @@ impl Canvas {
 		let bound_x = ClosedInterval::between(0,(self.width-1) as i32);
 		let bound_y = ClosedInterval::between(0,(self.height-1) as i32);
 		let bound_z = ClosedInterval::between(-1.,1.);
-		
+		let x_segment = ClosedInterval::range(points.iter().map(|p| p.x() as i32));
 		let y_segment = ClosedInterval::range(points.iter().map(|p| p.y() as i32));
 		let z_segment = ClosedInterval::range(points.iter().map(|p| p.z()));
 		if z_segment.and(&bound_z).is_empty() { return; }
 		
-		// 辺を求める
-		let mut points_idx:[usize; 3] = [0, 1, 2];
-		points_idx.sort_by(|a, b| points[a.clone()].y().partial_cmp(&points[b.clone()].y()).unwrap_or(std::cmp::Ordering::Equal));
-		let [bottom, middle, top] = [
-			points[points_idx[0]].to_point2(),
-			points[points_idx[1]].to_point2(),
-			points[points_idx[2]].to_point2()
-		];
-		let lines = [
-			Line::new(bottom, middle),
-			Line::new(middle, top),
-			Line::new(bottom, top),
-		];
 		// Barycentric座標
 		let area_abc = area(&points[0], &points[1], &points[2]);
 		// culling
@@ -44,10 +31,6 @@ impl Canvas {
 		let inv_abc = 1./area_abc; 
 
 		for y in &y_segment.and(&bound_y) {
-			let edge = if y < middle.y { &lines[0] } else { &lines[1] };
-			let i_edge1 = lines[2].across_y(y);
-			let i_edge2 = edge.across_y(y);
-			let x_segment = i_edge1.or(i_edge2);
 			for x in &x_segment.and(&bound_x) {
 				let p = Vec4::newpixel(x, y);
 				let w = [
@@ -55,6 +38,10 @@ impl Canvas {
 					area(&points[2], &points[0], &p) * inv_abc,
 					area(&points[0], &points[1], &p) * inv_abc,
 				];
+                if  !(0. < w[0] && w[0] < 1. &&
+                    0. < w[1] && w[1] < 1. &&
+                    0. < w[2] && w[2] < 1.)
+                { continue; }
 				let z = [
 					points[0].z(), points[1].z(), points[2].z(), 
 				];
