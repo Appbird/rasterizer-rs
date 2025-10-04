@@ -1,5 +1,4 @@
-use crate::{shader::fragment, util::{ClosedInterval, Color, Vec4, Vec4Screen}};
-use super::Canvas;
+use crate::{canvas::Canvas, shader::{fragment, vertex}, util::{ClosedInterval, Point2, Vec4, Vec4Screen}, world::{actor::Actor, camera::Camera}};
 
 fn area(p0:&Vec4, p1:&Vec4, p2:&Vec4) -> f64 {
 	let dx = p1 - p0;
@@ -7,12 +6,31 @@ fn area(p0:&Vec4, p1:&Vec4, p2:&Vec4) -> f64 {
 	dx.cross2d(&dy)
 }
 
-impl Canvas {
-    pub fn draw_triangle(
-        &mut self,
-        points: [Vec4Screen; 3],
-        color: &[Color; 3]
-    ) {
+struct MeshRenderer {
+    actor:Actor,
+    culling: bool,
+    polygons:Vec<Vec4Screen>
+}
+
+impl MeshRenderer {
+    fn render(self, camera:Camera, canvas:&mut Canvas) {
+        let perspective = camera.perspective_conversion();
+        let view = camera.view_conversion();
+        let pv = perspective*view;
+
+        let model = self.actor.model_conversion();
+        let pvm = &pv * &model;
+        for polygon in &self.actor.polygons {
+            let projected = [
+                vertex::default_vshader(&pvm, &polygon.vertices[0]).into_screen(&canvas.size()),
+                vertex::default_vshader(&pvm, &polygon.vertices[1]).into_screen(&canvas.size()),
+                vertex::default_vshader(&pvm, &polygon.vertices[2]).into_screen(&canvas.size()),
+            ];
+            canvas.draw_triangle(projected, &polygon.color);
+        }
+    }
+    // TODO: VBOを参照する形にしたい
+    fn rasterize(self, points: [Vec4Screen; 3], canvas:&mut Canvas) {
         // y基準でソート
 		let points = points.map(|p| p.0);
 		let bound_x = ClosedInterval::between(0,(self.width-1) as i32);
@@ -55,12 +73,12 @@ impl Canvas {
 				let color = &color[0]*w[0] + &color[1]*w[1] + &color[2]*w[2];
 				let color = fragment::fog_fshader(
                     p, color,
-                     Vec4::zero(), 
-                     far, near
+                    Vec4::zero(), 
+                    far, near
                 );
-                self.draw_pixel_with_depth(&p, &depth, &color);
+                canvas.draw_pixel_with_depth(&p, &depth, &color);
 			}
 		}
-        
     }
+
 }

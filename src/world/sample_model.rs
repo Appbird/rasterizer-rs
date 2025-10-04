@@ -2,7 +2,7 @@ use std::f64::consts::PI;
 
 use crate::{util::Vec4, world::actor::Polygon};
 
-pub fn tetrahedron(vert_color:[Vec4; 3]) -> Vec<Polygon> {
+pub fn tetrahedron(vert_color:[Vec4; 4]) -> Vec<Polygon> {
     let vectors = [
         Vec4::newpoint(0., 1., 0.),
         Vec4::newpoint(f64::cos(0.), -1./3., f64::sin(0.)),
@@ -29,7 +29,7 @@ pub fn tetrahedron(vert_color:[Vec4; 3]) -> Vec<Polygon> {
         polygons.push(
             Polygon {
                 vertices: vertex,
-                color: vert_color.clone()
+                color: index_array.map(|i| { vert_color[i].clone() })
             }
         );
     };

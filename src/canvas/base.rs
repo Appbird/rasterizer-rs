@@ -1,12 +1,12 @@
 use minifb::{Window, WindowOptions, Key};
-use crate::util::{in_range, Point2};
+use crate::util::{in_range, Point2, Vec4};
 use crate::util::Color;
 
 pub struct Canvas {
     window:Window,
     pub width:usize,
     pub height:usize,
-    pub culling: bool,
+    pub background_color:Vec4,
     color_buffer:Vec<u32>,
 	depth_buffer:Vec<f64>
 }
@@ -30,8 +30,8 @@ impl Canvas {
         let window = Window::new("rasterizer-rs", width, height, WindowOptions::default())?;
         let color_buffer = vec![0; width * height];
 		let depth_buffer = vec![1.; width * height];
-        let culling = false;
-        let mut canvas = Canvas{window, width, height, color_buffer, depth_buffer, culling};
+        let background_color = Vec4::new(0.06, 0.07, 0.07, 1.0);
+        let mut canvas = Canvas{window, width, height, color_buffer, depth_buffer, background_color};
         canvas.window.set_target_fps(60);
         Ok(canvas)
     }
@@ -85,7 +85,7 @@ impl Canvas {
     pub fn update(&mut self) -> minifb::Result<bool> {
         self.window.update_with_buffer(&self.color_buffer, self.width, self.height)?;
         for i in 0 .. self.width * self.height {
-            self.color_buffer[i] = encode_color(&Color::newvec(0., 0., 0.));
+            self.color_buffer[i] = encode_color(&self.background_color);
 			self.depth_buffer[i] = 1.;
         }
         Ok(self.window.is_open() && !self.window.is_key_down(Key::Escape))

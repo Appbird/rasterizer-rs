@@ -1,6 +1,6 @@
 use std::{f64::consts::PI, time::Instant};
 
-use crate::util::{Mat4x4, Vec4};
+use crate::util::{ease, Mat4x4, Vec4};
 
 #[derive(Clone)]
 pub struct Actor {
@@ -45,12 +45,19 @@ impl Actor {
         self.velocity += &self.acc * dt;
         self.theta += &self.omega * dt;
         self.omega += &self.angacc * dt;
-        if self.created_at.elapsed().as_secs_f64() > 3.0 { self.terminate(); }
+        
+        let t = self.created_at.elapsed().as_secs_f64();
+        
+        let scale_t = f64::min(t / 0.5, 1.);
+        self.scale = Vec4::newvec(1., 1., 1.) * 1.1 * ease::out_back(scale_t);
+
+        if t > 3.0 { self.terminate(); }
     }
     pub fn model_conversion(&self) -> Mat4x4 {
         let t = self.theta.norm3d();
         Mat4x4::translate(&self.position)
         * Mat4x4::rotation(&(&self.theta / t), t)
+        * Mat4x4::scale(&self.scale)
     }
     pub fn terminate(&mut self) {
         self.terminated = true;

@@ -5,6 +5,8 @@ mod mat4x4;
 mod debug;
 mod stopwatch;
 mod random;
+pub mod ease;
+pub mod color;
 
 pub use point2::*;
 pub use vec4::*;
