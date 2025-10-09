@@ -1,6 +1,6 @@
 use std::f64::consts::PI;
 
-use rasterizer_rs::world::actor::{Actor, Polygon};
+use rasterizer_rs::world::actor::{Actor, Mesh};
 use rasterizer_rs::world::camera::Camera;
 use rasterizer_rs::canvas::Canvas;
 use rasterizer_rs::util::{Stopwatch, Throwable, Vec4};
@@ -13,11 +13,11 @@ fn prepare_world() -> Vec<Actor> {
 	let red = Vec4::newvec(0.9, 0.2, 0.2);
     
     let polygons = vec![
-        Polygon{
+        Mesh{
             vertices:[Vec4::newpoint(1., 2., 3.), Vec4::newpoint(1., -2., 0.), Vec4::newpoint(-1., -1., -3.)],
             color: [red.clone(), blue.clone(), red.clone()]  
         },
-        Polygon{
+        Mesh{
             vertices:[Vec4::newpoint(1., 2., -3.), Vec4::newpoint(-1., -1., 3.), Vec4::newpoint(1., -2., 0.)],
             color: [green.clone(), blue.clone(), green.clone()]  
         },

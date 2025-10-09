@@ -1,5 +1,5 @@
 use minifb::{Window, WindowOptions, Key};
-use crate::util::{in_range, Point2, Vec4};
+use crate::util::{in_range, Point2, Stopwatch, Vec4};
 use crate::util::Color;
 
 pub struct Canvas {
@@ -8,7 +8,10 @@ pub struct Canvas {
     pub height:usize,
     pub background_color:Vec4,
     color_buffer:Vec<u32>,
-	depth_buffer:Vec<f64>
+	depth_buffer:Vec<f64>,
+    from_start:Stopwatch,
+    from_prev_frame:Stopwatch,
+    time:f64
 }
 
 fn encode_color(color: &Color) -> u32 {
@@ -31,7 +34,16 @@ impl Canvas {
         let color_buffer = vec![0; width * height];
 		let depth_buffer = vec![1.; width * height];
         let background_color = Vec4::new(0.06, 0.07, 0.07, 1.0);
-        let mut canvas = Canvas{window, width, height, color_buffer, depth_buffer, background_color};
+        let mut from_start = Stopwatch::new();
+        let from_prev_frame = Stopwatch::new();
+        from_start.start();
+        let mut canvas = Canvas{
+            window, width, height,
+            color_buffer, depth_buffer,
+            background_color,
+            from_prev_frame, from_start,
+            time:0.
+        };
         canvas.window.set_target_fps(60);
         Ok(canvas)
     }
@@ -82,7 +94,16 @@ impl Canvas {
             }
         }
     }
+    pub fn passed_time(&self) -> f64 {
+        self.from_start.elapsed_as_sec()
+    }
+    pub fn deltatime(&self) -> f64 {
+        self.from_prev_frame.elapsed_as_sec()
+    }
     pub fn update(&mut self) -> minifb::Result<bool> {
+        self.time += self.deltatime();
+        self.from_prev_frame.reset();  
+        self.from_prev_frame.start();
         self.window.update_with_buffer(&self.color_buffer, self.width, self.height)?;
         for i in 0 .. self.width * self.height {
             self.color_buffer[i] = encode_color(&self.background_color);

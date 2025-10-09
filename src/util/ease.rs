@@ -20,5 +20,6 @@ pub fn out_quart(t:f64) -> f64 {
     return 1. - s*s*s*s;
 }
 pub fn outin_quart(t:f64) -> f64 {
-    if t < 0.5 { 0.5*out_quart(2.*t) } else { 0.5+0.5*in_quart(2.*(t - 0.5)) }
+    let x = t - 0.5;
+    return f64::signum(x)*f64::powi(x, 4) * 8. + 0.5;
 }

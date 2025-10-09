@@ -4,32 +4,25 @@ use rand::Rng;
 use rasterizer_rs::world::actor::Actor;
 use rasterizer_rs::world::camera::Camera;
 use rasterizer_rs::canvas::Canvas;
-use rasterizer_rs::util::{color, ease, Stopwatch, Throwable, Vec4};
+use rasterizer_rs::util::{color, ease, Throwable, Vec4};
 use rasterizer_rs::world::sample_model::tetrahedron;
-use rand::seq::IndexedRandom;
+use rasterizer_rs::world::world::World;
 
 
 pub fn conversion_3d(camera:&mut Camera, canvas:&mut Canvas) -> Throwable<()> {
-    let mut from_start = Stopwatch::new();
-    let mut from_prev_frame = Stopwatch::new();
-	from_start.start();
+    let mut world = World::new();
+    
     
     let r = 15.0;
     let mut rng = rand::rng();
-
-    let mut world = vec![];
-    let mut to_be_destroyed = Vec::<usize>::new(); 
-    
     let mut count_tetra = 0;
     let tetra_interval = 0.10;
+    
     while canvas.update()? {
-        let t = from_start.elapsed_as_sec();
-        let t_dec =  t / 4. % 1.;
-        let camera_theta = 2.*PI * (t / 4. - t_dec + ease::outin_quart(t_dec)) ;
-        let dt = from_prev_frame.elapsed_as_sec();
-        from_prev_frame.reset();
-        from_prev_frame.start();
+        let t = canvas.passed_time();
+        let dt = canvas.deltatime();
 		
+        let camera_theta = 2.*PI * ease::outin_quart(t / 4. % 1.);
         camera.position = Vec4::newpoint(  r*f64::cos(camera_theta), r*f64::sin(camera_theta),  2. * (f64::cos(camera_theta) - 0.5)) ;
 		camera.look = (-&camera.position).normalized3d();
 		camera.up = Vec4::newvec(0., 0., 1.);
@@ -42,28 +35,22 @@ pub fn conversion_3d(camera:&mut Camera, canvas:&mut Canvas) -> Throwable<()> {
             let c2 = color::hsv2vec4(360. * theta_fire / (2.*PI), 0.3, 0.9);
             let tetra = tetrahedron([c1.clone(), c2.clone(), c2.clone(), c2.clone()]);
             let mut actor1 = Actor::new(tetra);
-            actor1.velocity = Vec4::newvec(1.2*f64::cos(theta_fire), 1.2*f64::sin(theta_fire), 0.75).normalized3d() * 17.5;
-            actor1.acc =  Vec4::newvec(0., 0., -12.);
-            actor1.theta = Vec4::choice_in_sphere(&mut rng) * PI;
-            actor1.omega = Vec4::choice_in_sphere(&mut rng) * rng.random_range(0. .. 4.*PI);
+            actor1.transform.velocity = Vec4::newvec(1.2*f64::cos(theta_fire), 1.2*f64::sin(theta_fire), 0.75).normalized3d() * 17.5;
+            actor1.transform.acc =  Vec4::newvec(0., 0., -12.);
+            actor1.transform.theta = Vec4::choice_in_sphere(&mut rng) * PI;
+            actor1.transform.omega = Vec4::choice_in_sphere(&mut rng) * rng.random_range(0. .. 4.*PI);
             let mut actor2 = actor1.clone();
             
-            actor2.velocity = -actor2.velocity;
-            world.push(actor1);
-            world.push(actor2);
+            actor2.transform.velocity = -actor2.transform.velocity;
+            world.spawn(actor1);
+            world.spawn(actor2);
         }
-        for (idx, actor) in world.iter_mut().enumerate() {
-            actor.update(dt);
-            if actor.is_terminated() { to_be_destroyed.push(idx); }
-        }
-        while let Some(idx) = to_be_destroyed.pop() {
-            world.swap_remove(idx);
-        }
+        world.update(dt);
         
 
         // DONE: Actorに速度・加速度をつける！
         // deltatime, Actorへの機能追加
-        camera.snapshot(canvas, &world);
+        world.draw(camera, canvas);
     }
     Ok(())
 }

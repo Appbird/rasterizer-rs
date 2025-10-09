@@ -1,4 +1,4 @@
-use crate::util::{ease, Point2, Vec4};
+use crate::util::{Point2, Vec4};
 
 pub fn default_fshader(
     _point:Point2,
@@ -16,12 +16,9 @@ pub fn fog_fshader(
     far: f64, near: f64,
     fog_far:f64
 ) -> Vec4 {
-    assert!(0. - 1e-6 <= depth || depth <= 1. + 1e-6);
-    // ldepth
     let depth = (2.*far*near) / (far+near - (far-near)*depth);
-    let depth = (depth - near)/(fog_far-near);
-    let depth = f64::max(depth, 0.0);
-    let depth = f64::min(depth / (fog_far), 1.0);
-    let depth = depth*depth;
-    return background_color*depth + color*(1. - depth);
+    let depth = (depth - near)/(fog_far - near);
+    let depth = f64::clamp(depth, 0.0, 1.0);
+    let fog = depth*depth;
+    return background_color*fog + color*(1. - fog);
 }
