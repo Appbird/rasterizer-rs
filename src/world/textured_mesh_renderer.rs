@@ -1,52 +1,61 @@
-use crate::{canvas::Canvas, shader::{fragment, vertex}, util::{ClosedInterval, Mat4x4, Vec4, Vec4Screen}, world::{mesh::Mesh, camera::Camera}};
+use image::{ImageReader, Rgba32FImage};
+
+use crate::{canvas::Canvas, shader::{fragment, vertex}, util::{ClosedInterval, Mat4x4, Vec4, Vec4Project, Vec4Screen}, world::{camera::Camera, mesh::TexturedMesh}};
 
 fn area(p0:&Vec4, p1:&Vec4, p2:&Vec4) -> f64 {
 	let dx = p1 - p0;
 	let dy = p2 - p0;
 	dx.cross2d(&dy)
 }
+
 #[derive(Clone)]
-pub struct MeshRenderer {
+pub struct TextureMeshRenderer {
+    texture: Rgba32FImage,
     culling: bool
 }
 
-impl MeshRenderer {
+impl TextureMeshRenderer {
     pub fn new() -> Self {
-        MeshRenderer { culling: false }
+        let texture = ImageReader::open("resource/texture.jpg").unwrap().decode().unwrap();
+        let texture = texture.to_rgba32f();
+        Self { texture, culling: false }
     }
     pub fn render(
         &self,
-        mesh:&Mesh,
-        camera:&Camera,
+        mesh:&TexturedMesh,
+        _camera:&Camera,
         canvas:&mut Canvas,
         pv:&Mat4x4,
         model:&Mat4x4
     ) {
         let pvm = pv * model;
-        let converted_vertex =
+        let converted_vertex:Vec<Vec4Project> =
             mesh.vertices.iter()
-            .map(|v| { vertex::default_vshader(&pvm, v).into_screen(&canvas.size()) })
+            .map(|v| { vertex::default_vshader(&pvm, v) })
             .collect();
+        let w = 
+            converted_vertex.iter().map(|v| { v.w() }).collect();
+        let converted_vertex = 
+            converted_vertex.into_iter().map(|v| {v.into_screen(&canvas.size())}).collect();
+        
         self.rasterize(
             mesh,
             &converted_vertex,
-            camera,
+            &w,
             canvas
         );
     }
-    // DONE: VBOを参照する形にしたい
     fn rasterize(
         &self,
-        mesh:&Mesh,
+        mesh:&TexturedMesh,
         converted_vertex:&Vec<Vec4Screen>,
-        camera:&Camera,
+        z_values:&Vec<f64>,
         canvas:&mut Canvas
     ) {
-        
         for idx in &mesh.v_idx {
             let points:Vec<&Vec4> = idx.iter().map(|d| { &converted_vertex[*d].0 } ).collect();
-            let colors:Vec<&Vec4> = idx.iter().map(|d| { &mesh.colors[*d] } ).collect();
-            
+            let uvs:Vec<&Vec4> = idx.iter().map(|d| { &mesh.uv[*d] } ).collect();
+            let z_value:Vec<f64> = idx.iter().map(|d| { z_values[*d] }).collect();
             // y基準でソート
             let bound_x = ClosedInterval::between(0,(canvas.width-1) as i32);
             let bound_y = ClosedInterval::between(0,(canvas.height-1) as i32);
@@ -77,7 +86,7 @@ impl MeshRenderer {
                         area(&points[2], &points[0], &p) * inv_abc,
                         area(&points[0], &points[1], &p) * inv_abc,
                     ];
-
+                    
                     let u_intv = 0. .. 1.;
                     if  !w.iter().all(|e| u_intv.contains(e)) { continue; }
                     
@@ -86,14 +95,10 @@ impl MeshRenderer {
                     ];
                     let p = p.to_point2();
                     let depth = w[0]*z[0] + w[1]*z[1] + w[2]*z[2];
-                    let color = colors[0]*w[0] + colors[1]*w[1] + colors[2]*w[2];
-                    let color = fragment::fog_fshader(
-                        p,
-                        depth, &color,
-                        &canvas.background_color,
-                        camera.far, camera.near,
-                        40.
-                    );
+                    let z = 1./(w[0]/z_value[0] + w[1]/z_value[1] + w[2]/z_value[2]);
+                    let uv = uvs[0]*w[0]/z_value[0] + uvs[1]*w[1]/z_value[1] + uvs[2]*w[2]/z_value[2];
+                    let uv = uv * z;
+                    let color = fragment::texture_fshader(p, &uv, &self.texture);
                     canvas.draw_pixel_with_depth(&p, &depth, &color);
                 }
             }

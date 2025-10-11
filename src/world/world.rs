@@ -1,15 +1,15 @@
 use crate::{canvas::Canvas, world::{actor::Actor, camera::Camera}};
 
-pub struct World {
-    actors:Vec<Actor>
+pub struct World<T> where T:Actor {
+    actors:Vec<T>
 }
-impl World {
+impl<T> World<T> where T:Actor {
     pub fn new() -> Self {
         World {
             actors: vec![]
         }
     }
-    pub fn spawn(&mut self, actor: Actor) {
+    pub fn spawn(&mut self, actor: T) {
         self.actors.push(actor);
     }
     pub fn update(&mut self, deltatime:f64) {
@@ -24,13 +24,8 @@ impl World {
         let p = camera.perspective_conversion();
         let v = camera.view_conversion();
         let pv = p*v;
-
         for actor in &self.actors {
-            actor.mesh_renderer.render(
-                &actor.mesh, camera, canvas,
-                &pv, 
-                &actor.transform.model_conversion()
-            );
+            actor.render(camera, canvas, &pv);
         }
     }
     fn sweep_obj(&mut self, mut terminated:Vec::<usize>) {

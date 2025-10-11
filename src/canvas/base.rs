@@ -11,7 +11,7 @@ pub struct Canvas {
 	depth_buffer:Vec<f64>,
     from_start:Stopwatch,
     from_prev_frame:Stopwatch,
-    time:f64
+    deltatime: f64,
 }
 
 fn encode_color(color: &Color) -> u32 {
@@ -42,7 +42,7 @@ impl Canvas {
             color_buffer, depth_buffer,
             background_color,
             from_prev_frame, from_start,
-            time:0.
+            deltatime: 0.
         };
         canvas.window.set_target_fps(60);
         Ok(canvas)
@@ -98,10 +98,10 @@ impl Canvas {
         self.from_start.elapsed_as_sec()
     }
     pub fn deltatime(&self) -> f64 {
-        self.from_prev_frame.elapsed_as_sec()
+        self.deltatime
     }
     pub fn update(&mut self) -> minifb::Result<bool> {
-        self.time += self.deltatime();
+        self.deltatime = self.from_prev_frame.elapsed_as_sec();
         self.from_prev_frame.reset();  
         self.from_prev_frame.start();
         self.window.update_with_buffer(&self.color_buffer, self.width, self.height)?;

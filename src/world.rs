@@ -1,5 +1,9 @@
 pub mod actor;
 pub mod camera;
-pub mod sample_model;
+pub mod tetrahedron;
+pub mod plane;
 pub mod mesh_renderer;
 pub mod world;
+pub mod transform;
+pub mod mesh;
+pub mod textured_mesh_renderer;

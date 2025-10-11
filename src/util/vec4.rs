@@ -19,12 +19,20 @@ impl Vec4Screen {
 pub struct Vec4Project(Vec4);
 impl Vec4Project {
 	pub fn new(v:Vec4) -> Self {
-		if v.w() < 1e-6 { Self(v*1e6) } else { Self(&v/v.w()) }
+        Self(v)
 	}
 	pub fn into_screen(&self, size:&Point2) -> Vec4Screen {
-        let scale = size.y as f64 / 2.;
-        let v = self.0.scaled_xy(&scale, &(-scale)) + size.to_vec4() / 2.;
+        let scale_y = size.y as f64 / 2.;
+        let scale_x = size.x as f64 / 2.;
+        let v = self.to_vec4().scaled_xy(&scale_x, &(-&scale_y)) + size.to_vec4() / 2.;
 		Vec4Screen(v)
+    }
+    pub fn w(&self) -> f64 {
+        return self.0.w();
+    }
+    pub fn to_vec4(&self) -> Vec4 {
+		let v = &self.0;
+        if v.w() < 1e-6 { v*1e6 } else { v/v.w() }
     }
 }
 
