@@ -14,21 +14,6 @@ struct Attribute {
     point:Vec4,
     uv:Vec4
 }
-macro_rules! impl_varying_fields {
-    ($ty:ident { $($field:ident),+ $(,)? }) => {
-        
-        impl Interpolable for $ty {
-            fn interpolate(p:[&Self;3], w:[f64; 3]) -> Self {
-                Self {
-                    $(
-                        $field: &p[0].$field * w[0] + &p[1].$field * w[1] + &p[2].$field * w[2],
-                    ) +
-                }
-            }
-        }
-
-    }
-}
 
 struct Varying {
     depth:Vec4,

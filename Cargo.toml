@@ -1,16 +1,2 @@
-[package]
-name = "rasterizer-rs"
-version = "0.1.0"
-edition = "2021"
-default-run = "rasterizer-rs"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
-[dependencies]
-env_logger = "0.11.5"
-error-iter = "0.4.1"
-image = "0.25.8"
-log = "0.4.22"
-minifb = "0.27.0"
-palette = "0.7.6"
-rand = "0.9.1"
+[workspace]
+members = ["core", "interpolate_derive"]
