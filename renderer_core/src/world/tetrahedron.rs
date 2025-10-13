@@ -1,8 +1,9 @@
 use std::{f64::consts::PI, time::Instant};
 
-use crate::{canvas::Canvas, util::{ease, Mat4x4, Vec4, Vec4Model}, world::{actor::Actor, camera::Camera, mesh::Mesh, mesh_renderer::MeshRenderer, transform::Transform}};
+use crate::{canvas::Canvas, util::{ease, Mat4x4, Vec4, Vec4Model}, world::{actor::Actor, camera::Camera, mesh::VertexArrayObject, mesh_renderer::MeshRenderer, transform::Transform}};
 
-pub fn tetrahedron_mesh(vert_color:[Vec4; 4]) -> Mesh {
+
+pub fn tetrahedron_mesh(vert_color:[Vec4; 4]) -> VertexArrayObject<> {
     let vectors = [
         Vec4::newpoint(0., 1., 0.),
         Vec4::newpoint(f64::cos(0.), -1./3., f64::sin(0.)),

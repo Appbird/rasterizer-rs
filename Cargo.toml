@@ -1,2 +1,2 @@
 [workspace]
-members = ["core", "interpolate_derive"]
+members = ["renderer_core", "interpolate_derive"]
