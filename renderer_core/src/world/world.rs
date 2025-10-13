@@ -1,4 +1,4 @@
-use crate::{canvas::Canvas, world::{actor::Actor, camera::Camera}};
+use crate::{actor::Actor, canvas::Canvas, world::camera::Camera};
 
 pub struct World<T> where T:Actor {
     actors:Vec<T>

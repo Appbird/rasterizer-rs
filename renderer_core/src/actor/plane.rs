@@ -2,7 +2,7 @@ use std::rc::Rc;
 
 use image::{ImageReader, Rgba32FImage};
 
-use crate::{canvas::Canvas, shader::{pipeline::RenderingPipeline, texture_pipeline::TexturePipeline}, util::{Mat4x4, Vec4, Vec4Model}, world::{actor::Actor, camera::Camera, mesh::VertexArrayObject, mesh_renderer::MeshRenderer, transform::Transform}};
+use crate::{actor::Actor, canvas::Canvas, component::{MeshRenderer, Transform}, shader::{pipeline::RenderingPipeline, texture_pipeline::TexturePipeline}, util::{Mat4x4, Vec4, Vec4Model, VertexArrayObject}, world::camera::Camera};
 
 type TextureUniform = <TexturePipeline as RenderingPipeline>::Uniform;
 type TextureAttribute = <TexturePipeline as RenderingPipeline>::Attribute;

@@ -1,4 +1,4 @@
-use crate::{canvas::Canvas, util::Mat4x4, world::{camera::Camera, transform::Transform}};
+use crate::{canvas::Canvas, component::Transform, util::Mat4x4, world::camera::Camera};
 
 pub trait Actor {
     fn update(&mut self, dt:f64) -> ();

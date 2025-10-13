@@ -4,8 +4,8 @@ use rand::Rng;
 use renderer_core::world::camera::Camera;
 use renderer_core::canvas::Canvas;
 use renderer_core::util::{color, ease, Throwable, Vec4};
-use renderer_core::world::plane::PlaneActor;
-use renderer_core::world::tetrahedron::{tetrahedron_mesh, TetrahedronActor};
+use renderer_core::actor::plane::PlaneActor;
+use renderer_core::actor::tetrahedron::{tetrahedron_mesh, TetrahedronActor};
 use renderer_core::world::world::World;
 
 

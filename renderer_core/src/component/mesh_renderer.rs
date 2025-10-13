@@ -1,4 +1,4 @@
-use crate::{canvas::Canvas, shader::pipeline::RenderingPipeline, util::{ClosedInterval, Vec4, Vec4Screen}, world::mesh::{VertexArrayObject}};
+use crate::{canvas::Canvas, shader::pipeline::RenderingPipeline, util::{ClosedInterval, Vec4, Vec4Screen, VertexArrayObject}};
 use crate::shader::pipeline::Interpolable;
 
 fn area(p0:&Vec4, p1:&Vec4, p2:&Vec4) -> f64 {
