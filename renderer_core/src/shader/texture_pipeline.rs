@@ -9,20 +9,20 @@ use interpolate_derive::Interpolate;
 
 #[derive(Clone)]
 pub struct TexturePipeline;
-struct Uniform {
+pub struct Uniform {
     pub pvm:Mat4x4,
     pub size:Point2,
     pub texture:Rc<Rgba32FImage>
 }
 
 #[derive(Clone)]
-struct TAttribute {
+pub struct TAttribute {
     pub point:Vec4Model,
     pub uv:Vec4
 }
 
 #[derive(Interpolate)]
-struct Varying {
+pub struct Varying {
     uv_inv_z:Vec4,
     inv_z:f64
 }
@@ -36,7 +36,7 @@ impl RenderingPipeline for TexturePipeline{
         let v = Vec4Project::new(&uni.pvm * &vert.point.0);
         (
             Varying{
-                uv_inv_z: vert.uv.clone() / vert.point.0.z(),
+                uv_inv_z: vert.uv.clone() / v.w(),
                 inv_z: 1. / v.w()
             }, 
             v.into_screen(&uni.size)

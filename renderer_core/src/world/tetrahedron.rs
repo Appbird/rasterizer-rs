@@ -1,9 +1,11 @@
 use std::{f64::consts::PI, time::Instant};
 
-use crate::{canvas::Canvas, util::{ease, Mat4x4, Vec4, Vec4Model}, world::{actor::Actor, camera::Camera, mesh::VertexArrayObject, mesh_renderer::MeshRenderer, transform::Transform}};
+use crate::{canvas::Canvas, shader::{color_pipeline::ColorPipeline, pipeline::RenderingPipeline}, util::{ease, Mat4x4, Vec4, Vec4Model}, world::{actor::Actor, camera::Camera, mesh::VertexArrayObject, mesh_renderer::MeshRenderer, transform::Transform}};
 
+type ColorUni = <ColorPipeline as RenderingPipeline>::Uniform;
+type ColorAttr = <ColorPipeline as RenderingPipeline>::Attribute;
 
-pub fn tetrahedron_mesh(vert_color:[Vec4; 4]) -> VertexArrayObject<> {
+pub fn tetrahedron_mesh(vert_color:[Vec4; 4]) -> VertexArrayObject<ColorAttr> {
     let vectors = [
         Vec4::newpoint(0., 1., 0.),
         Vec4::newpoint(f64::cos(0.), -1./3., f64::sin(0.)),
@@ -33,31 +35,32 @@ pub fn tetrahedron_mesh(vert_color:[Vec4; 4]) -> VertexArrayObject<> {
         }
         v_idx_list.push([0 + idx * 3, 1 + idx*3, 2 + idx*3]);
     };
-    Mesh {
-        vertices,
-        colors,
-        v_idx: v_idx_list
+    VertexArrayObject::<_>{
+        attribute: vertices.into_iter().zip(colors)
+            .map(|(point, color)| { ColorAttr{ point, color } })
+            .collect(),
+        idx: v_idx_list
     }
 }
 
 
 #[derive(Clone)]
 pub struct TetrahedronActor {
-    pub mesh:Mesh,
+    pub mesh:VertexArrayObject<ColorAttr>,
     pub transform:Transform,
-    pub mesh_renderer: MeshRenderer,
+    pub mesh_renderer: MeshRenderer<ColorPipeline>,
     created_at: Instant,
     terminated:bool,
 }
 
 impl TetrahedronActor {
     pub fn new(
-        mesh:Mesh
+        mesh:VertexArrayObject<ColorAttr>
     ) -> Self {
         Self {
             mesh,
             transform: Transform::new(),
-            mesh_renderer: MeshRenderer::new(),
+            mesh_renderer: MeshRenderer::new(ColorPipeline{}),
             created_at: Instant::now(),
             terminated: false
         }
@@ -77,7 +80,15 @@ impl Actor for TetrahedronActor {
         &self.transform
     }
     fn render(&self, camera:&Camera, canvas:&mut Canvas, pv:&Mat4x4) -> () {
-        self.mesh_renderer.render(&self.mesh, camera, canvas, pv, &self.transform.model_conversion());
+        let uni = ColorUni{
+            pvm: pv * &self.transform.model_conversion(),
+            size: canvas.size(),
+            background_color: canvas.background_color.clone(),
+            far: camera.far,
+            near: camera.near,
+            fog_far: 40.,
+        };
+        self.mesh_renderer.render(canvas, &self.mesh, &uni);
     }
     fn is_terminated(&self) -> bool {
         self.terminated

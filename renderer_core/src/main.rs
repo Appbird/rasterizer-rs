@@ -1,12 +1,12 @@
 use std::f64::consts::PI;
 
 use rand::Rng;
-use rasterizer_rs::world::camera::Camera;
-use rasterizer_rs::canvas::Canvas;
-use rasterizer_rs::util::{color, ease, Throwable, Vec4};
-use rasterizer_rs::world::plane::PlaneActor;
-use rasterizer_rs::world::tetrahedron::{tetrahedron_mesh, TetrahedronActor};
-use rasterizer_rs::world::world::World;
+use renderer_core::world::camera::Camera;
+use renderer_core::canvas::Canvas;
+use renderer_core::util::{color, ease, Throwable, Vec4};
+use renderer_core::world::plane::PlaneActor;
+use renderer_core::world::tetrahedron::{tetrahedron_mesh, TetrahedronActor};
+use renderer_core::world::world::World;
 
 
 pub fn tetrahedron_world(camera:&mut Camera, canvas:&mut Canvas) -> Throwable<()> {

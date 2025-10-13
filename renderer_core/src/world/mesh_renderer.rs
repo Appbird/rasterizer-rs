@@ -9,12 +9,12 @@ fn area(p0:&Vec4, p1:&Vec4, p2:&Vec4) -> f64 {
 #[derive(Clone)]
 pub struct MeshRenderer<R:RenderingPipeline> {
     culling: bool,
-    rp: R
+    _rp: R
 }
 
 impl<R> MeshRenderer<R> where R:RenderingPipeline {
     pub fn new(rp:R) -> Self {
-        MeshRenderer { culling: false, rp }
+        MeshRenderer { culling: false, _rp:rp }
     }
     pub fn render(
         &self,

@@ -1,6 +1,6 @@
 use image::{ImageReader, Rgba32FImage};
 
-use crate::{canvas::Canvas, shader::{fragment, vertex}, util::{ClosedInterval, Mat4x4, Vec4, Vec4Project, Vec4Screen}, world::{camera::Camera, mesh::TexturedMesh}};
+use crate::{canvas::Canvas, shader::{fragment, vertex}, util::{ClosedInterval, Mat4x4, Vec4, Vec4Project, Vec4Screen}, world::{camera::Camera}};
 
 fn area(p0:&Vec4, p1:&Vec4, p2:&Vec4) -> f64 {
 	let dx = p1 - p0;
