@@ -84,7 +84,6 @@ impl Actor for TetrahedronActor {
             pvm: pv * &self.transform.model_conversion(),
             size: canvas.size(),
             background_color: canvas.background_color.clone(),
-            far: camera.far,
             near: camera.near,
             fog_far: 40.,
         };

@@ -10,9 +10,9 @@ pub fn derive_interpolable(input:TokenStream) -> TokenStream {
     let fields = match input.data {
         Data::Struct(ref s) => match &s.fields {
             Fields::Named(f) => f.named.iter().map(|f| f.ident.clone().unwrap()).collect::<Vec<_>>(),
-            _ => panic!("Interpolable can only be derived for structs with named fields"),
+            _ => panic!("Interpolableは名前付きフィールドしか受け取らないけど、なんか変なもの入れてない？"),
         },
-        _ => panic!("Interpolable can only be derived for structs"),
+        _ => panic!("Interpolableは構造体しか受け取らんよ～他のもの入れてない？"),
     };
     let expanded = quote! {
         impl Interpolable for #name {

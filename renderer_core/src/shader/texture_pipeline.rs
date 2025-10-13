@@ -14,23 +14,19 @@ pub struct Uniform {
     pub size:Point2,
     pub texture:Rc<Rgba32FImage>
 }
-
 #[derive(Clone)]
-pub struct TAttribute {
+pub struct Attribute {
     pub point:Vec4Model,
     pub uv:Vec4
 }
-
 #[derive(Interpolate)]
 pub struct Varying {
     uv_inv_z:Vec4,
     inv_z:f64
 }
-
-
 impl RenderingPipeline for TexturePipeline{
     type Uniform = Uniform;
-    type Attribute = TAttribute;
+    type Attribute = Attribute;
     type Varying = Varying;
     fn vertex(uni:&Uniform, vert:&Self::Attribute) -> (Varying, Vec4Screen) {
         let v = Vec4Project::new(&uni.pvm * &vert.point.0);

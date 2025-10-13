@@ -75,6 +75,6 @@ fn main() -> Throwable<()> {
     let aspect = (h as f64) / (w as f64);
     let mut canvas = Canvas::new(w, h)?;
     let mut camera = Camera::new(aspect);
-    plane_world(&mut camera, &mut canvas)?;
+    tetrahedron_world(&mut camera, &mut canvas)?;
     Ok(())
 }

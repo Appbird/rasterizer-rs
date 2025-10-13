@@ -9,7 +9,6 @@ pub struct Uniform {
     pub pvm:Mat4x4,
     pub size:Point2,
     pub background_color:Vec4,
-    pub far:f64,
     pub near:f64,
     pub fog_far:f64,
 }
@@ -43,13 +42,10 @@ impl RenderingPipeline for ColorPipeline{
     }
 
     fn fragment(_p:&Point2, uni:&Uniform, vary:&Varying) -> Vec4 {
-        let far = uni.far;
         let near = uni.near;
         let fog_far = uni.fog_far;
-        let z_value = 1./vary.inv_z;
-        println!("{}", z_value);
-
-        let depth = (2.*far*near) / (far+near - (far-near)*z_value);
+        
+        let depth = 1./vary.inv_z;
         let depth = (depth - near)/(fog_far - near);
         let depth = f64::clamp(depth, 0.0, 1.0);
         let fog = depth*depth;
