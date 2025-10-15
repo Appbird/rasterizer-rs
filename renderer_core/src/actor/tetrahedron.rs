@@ -1,6 +1,6 @@
 use std::{f64::consts::PI, time::Instant};
 
-use crate::{actor::Actor, canvas::Canvas, component::{MeshRenderer, Transform}, shader::{color_pipeline::ColorPipeline, pipeline::RenderingPipeline}, util::{ease, Mat4x4, Vec4, Vec4Model, VertexArrayObject}, world::camera::Camera};
+use crate::{actor::Actor, canvas::Canvas, component::{MeshRenderer, Transform}, mesh::VertexArrayObject, shader::{color_pipeline::ColorPipeline, pipeline::RenderingPipeline}, util::{ease, Mat4x4, Vec4, Vec4Model}, world::camera::Camera};
 
 type ColorUni = <ColorPipeline as RenderingPipeline>::Uniform;
 type ColorAttr = <ColorPipeline as RenderingPipeline>::Attribute;
