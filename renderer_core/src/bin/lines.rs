@@ -1,6 +1,6 @@
 use std::f64::consts::PI;
-use rasterizer_rs::canvas::Canvas;
-use rasterizer_rs::util::{Color, Stopwatch, Throwable, Vec4, Vec4Project};
+use renderer_core::canvas::Canvas;
+use renderer_core::util::{Color, Stopwatch, Throwable, Vec4, Vec4Project};
 
 fn main() -> Throwable<()> {
     let w: usize = 640;
