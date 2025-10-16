@@ -16,6 +16,7 @@ impl<R> MeshRenderer<R> where R:RenderingPipeline {
     pub fn new(rp:R) -> Self {
         MeshRenderer { culling: false, _rp:rp }
     }
+    pub fn culling(&mut self, activate:bool) { self.culling = activate; }
     pub fn render(
         &self,
         canvas:&mut Canvas,
