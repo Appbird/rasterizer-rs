@@ -35,7 +35,7 @@ impl<R> MeshRenderer<R> where R:RenderingPipeline {
             .map(|poly| { poly.map(|idx| { &vert_out[idx].1.0 }) });
         for (varying, points) in polygons.zip(varyings) {
             // y基準でソート
-            let (x_segment, y_segment, z_segment) = drawing_segments(canvas, &points);
+            let (x_segment, y_segment, z_segment) = calc_bounding_box(canvas, &points);
             if z_segment.is_empty() { return; }
             
             // Barycentric座標
@@ -55,8 +55,8 @@ impl<R> MeshRenderer<R> where R:RenderingPipeline {
                         area(&points[0], &points[1], &p) * inv_abc,
                     ];
  
-                    let u_intv = 0. .. 1.;
-                    if  !w.iter().all(|e| u_intv.contains(e)) { continue; }
+                    let u_intv = ClosedInterval::between(0. - 1e-6, 1. + 1e-6);
+                    if  !w.iter().all(|e| u_intv.includes(*e)) { continue; }
 
                     let p = p.to_point2();
                     let frag_vary = R::Varying::interpolate(&varying, &w);
@@ -69,7 +69,7 @@ impl<R> MeshRenderer<R> where R:RenderingPipeline {
     }
 }
 
-fn drawing_segments(canvas: &mut Canvas, points: &[&Vec4; 3]) -> (ClosedInterval, ClosedInterval, ClosedInterval<f64>) {
+fn calc_bounding_box(canvas: &mut Canvas, points: &[&Vec4; 3]) -> (ClosedInterval, ClosedInterval, ClosedInterval<f64>) {
     let bound_x = ClosedInterval::between(0,(canvas.width-1) as i32);
     let bound_y = ClosedInterval::between(0,(canvas.height-1) as i32);
     let bound_z = ClosedInterval::between(-1.,1.);

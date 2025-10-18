@@ -3,7 +3,6 @@ use std::f64::consts::PI;
 use std::path::Path;
 
 use renderer_core::actor::gltf_test::GltfTestActor;
-use renderer_core::actor::tetrahedron::TetrahedronActor;
 use renderer_core::mesh::mesh_loader::load_vao;
 use renderer_core::world::camera::Camera;
 use renderer_core::canvas::Canvas;
