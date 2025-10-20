@@ -1,3 +1,4 @@
+
 use crate::{canvas::Canvas, mesh::VertexArrayObject, shader::pipeline::RenderingPipeline, util::{ClosedInterval, Vec4, Vec4Screen}};
 use crate::shader::pipeline::Interpolable;
 
@@ -36,14 +37,13 @@ impl<R> MeshRenderer<R> where R:RenderingPipeline {
         for (varying, points) in polygons.zip(varyings) {
             // y基準でソート
             let (x_segment, y_segment, z_segment) = calc_bounding_box(canvas, &points);
-            if z_segment.is_empty() { return; }
+            if z_segment.is_empty() { continue; }
             
             // Barycentric座標
             let area_abc = area(&points[0], &points[1], &points[2]);
             
-            // culling
-            if self.culling && area_abc < 0. { return; }
-            if area_abc.abs() < 1e-6 { return; }
+            if self.culling && area_abc < 0. { continue; }
+            if area_abc.abs() < 1e-6 { continue; }
             let inv_abc = 1./area_abc; 
 
             for y in &y_segment {

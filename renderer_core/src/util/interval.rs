@@ -100,13 +100,12 @@ impl ClosedInterval<f64> {
 	}
 }
 
-// Iteratorはi32専用
 impl Iterator for ClosedIntervalIter {
 	type Item = i32;
 	fn next(&mut self) -> Option<Self::Item> {
 		let current = self.current;
 		self.current = current + 1;
-		if self.end > current {
+		if self.end >= current {
 			Some(current)
 		} else {
 			None

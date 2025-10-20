@@ -5,3 +5,4 @@ pub mod shader;
 pub mod actor;
 pub mod component;
 pub mod mesh;
+pub mod debug;

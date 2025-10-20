@@ -18,16 +18,16 @@ fn main() -> Throwable<()> {
     let mut camera = Camera::new(aspect);
     
     let mut world = World::<GltfTestActor>::new();
-    let vao_seq = load_vao(&Path::new("./resource/test_model.glb"))?;
+    let vao_seq = load_vao(&Path::new("./resource/sponza.glb"))?;
     
     vao_seq.into_iter()
-    .map(|vao| GltfTestActor::new(vao))
+    .map(|(vao, image)| GltfTestActor::new(vao, image))
     .for_each(|actor| world.spawn(actor));
     
     while canvas.update()? {
         let t = canvas.passed_time();
         let theta = 2.*PI/5. * t;
-        let r = 3.;
+        let r = 1.;
         camera.position = Vec4::newpoint(r* f64::cos(theta), r*f64::sin(theta), 1.);
         camera.look = -camera.position.normalized3d();
         camera.up = Vec4::newvec(0., 0., 1.);

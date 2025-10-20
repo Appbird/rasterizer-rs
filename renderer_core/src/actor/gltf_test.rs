@@ -1,29 +1,37 @@
 
-use crate::{actor::Actor, canvas::Canvas, component::{MeshRenderer, Transform}, mesh::VertexArrayObject, shader::{color_pipeline::ColorPipeline, pipeline::RenderingPipeline}, util::Mat4x4, world::camera::Camera};
+use std::rc::Rc;
 
-type ColorUni = <ColorPipeline as RenderingPipeline>::Uniform;
-type ColorAttr = <ColorPipeline as RenderingPipeline>::Attribute;
+use image::{DynamicImage, Rgba32FImage};
+
+use crate::{actor::Actor, canvas::Canvas, component::{MeshRenderer, Transform}, mesh::VertexArrayObject, shader::{texture_pipeline::TexturePipeline, pipeline::RenderingPipeline}, util::Mat4x4, world::camera::Camera};
+
+type TextureUni = <TexturePipeline as RenderingPipeline>::Uniform;
+type TextureAttr = <TexturePipeline as RenderingPipeline>::Attribute;
 
 
 #[derive(Clone)]
 pub struct GltfTestActor {
-    pub mesh:VertexArrayObject<ColorAttr>,
+    pub mesh:VertexArrayObject<TextureAttr>,
     pub transform:Transform,
-    pub mesh_renderer: MeshRenderer<ColorPipeline>,
+    pub mesh_renderer: MeshRenderer<TexturePipeline>,
+    texture: Rc<Rgba32FImage>,
     terminated:bool,
 }
 
 impl GltfTestActor {
     pub fn new(
-        mesh:VertexArrayObject<ColorAttr>
+        mesh:VertexArrayObject<TextureAttr>,
+        image: Rgba32FImage
     ) -> Self {
-        let mut mesh_renderer = MeshRenderer::new(ColorPipeline{});
+        let mut mesh_renderer = MeshRenderer::new(TexturePipeline{});
+        let texture = Rc::new(image);
         mesh_renderer.culling(true);
         Self {
             mesh,
             transform: Transform::new(),
             mesh_renderer,
-            terminated: false
+            terminated: false,
+            texture
         }
     }
 }
@@ -35,13 +43,11 @@ impl Actor for GltfTestActor {
     fn transform(&self) -> &Transform {
         &self.transform
     }
-    fn render(&self, camera:&Camera, canvas:&mut Canvas, pv:&Mat4x4) -> () {
-        let uni = ColorUni{
+    fn render(&self, _camera:&Camera, canvas:&mut Canvas, pv:&Mat4x4) -> () {
+        let uni = TextureUni{
             pvm: pv * &self.transform.model_conversion(),
             size: canvas.size(),
-            background_color: canvas.background_color.clone(),
-            near: camera.near,
-            fog_far: 40.,
+            texture: self.texture.clone()
         };
         self.mesh_renderer.render(canvas, &self.mesh, &uni);
     }

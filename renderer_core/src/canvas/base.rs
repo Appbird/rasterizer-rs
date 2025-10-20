@@ -11,7 +11,7 @@ pub struct Canvas {
 	depth_buffer:Vec<f64>,
     from_start:Stopwatch,
     from_prev_frame:Stopwatch,
-    deltatime: f64,
+    deltatime: f64
 }
 
 fn encode_color(color: &Color) -> u32 {
